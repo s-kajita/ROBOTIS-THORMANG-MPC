@@ -1,24 +1,25 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>thormang3_action_module</name>
-  <version>0.1.3</version>
+  <version>0.2.0</version>
   <description>
     This package is a motion module that can play the saved action.
     This module is based on position control.
   </description>
-  <license>BSD</license>
-  <author email="hjsong@robotis.com">Jay Song</author>
+  <license>Apache 2.0</license>
+  <author email="kmjung@robotis.com">Kayman</author>
+  <author>Jay Song</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
-  <url type="bugtracker">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-MPC/issues</url>
-  <url type="repository">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-MPC</url>
   <url type="website">http://wiki.ros.org/thormang3_action_module</url>
+  <url type="emanual">http://emanual.robotis.com/docs/en/platform/thormang3/introduction/</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-MPC</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-MPC/issues</url>
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>robotis_framework_common</build_depend>
-  <build_depend>robotis_controller_msgs</build_depend>
-  <build_depend>thormang3_action_module_msgs</build_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>robotis_framework_common</run_depend>
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>std_msgs</depend>
+  <depend>robotis_controller_msgs</depend>
+  <depend>thormang3_action_module_msgs</depend>
+  <depend>robotis_framework_common</depend>
+  <depend>boost</depend>
 </package>
