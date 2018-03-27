@@ -19,8 +19,8 @@
   <depend>geometry_msgs</depend>
   <depend>robotis_controller_msgs</depend>
   <depend>cmake_modules</depend>
-  <depend>robotis_math</depend>
   <depend>robotis_framework_common</depend>
+  <depend>robotis_math</depend>
   <depend>thormang3_kinematics_dynamics</depend>
   <depend>boost</depend>
   <depend>eigen</depend>
