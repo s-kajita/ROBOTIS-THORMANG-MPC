@@ -2,13 +2,21 @@
 Changelog for package thormang3_action_module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.0 (2018-03-27)
+------------------
+* modified build option and dependencies configuration
+* modified cmake & package setting for yaml-cpp
+* changed depend pkg for catkin dependencies and package.xml format to v2
+* changed include path for dependencies and license to Apache v2
+* Contributors: SCH, Pyo
+
 0.1.3 (2017-05-23)
------------
+------------------
 * updated cmake file for ros install
 * Contributors: SCH
 
 0.1.2 (2017-04-24)
------------
+------------------
 * edited action file and dxl_init
 * added function for action_editor to action_module
 * bug fix : action file load
@@ -25,11 +33,11 @@ Changelog for package thormang3_action_module
 * Contributors: Jay Song, Zerom, Kayman
 
 0.1.1 (2016-08-19)
------------
+------------------
 * none
 
 0.1.0 (2016-08-18)
------------
+------------------
 * first public release for Kinetic
 * modified package information for release
 * action file edited
@@ -51,4 +59,4 @@ Changelog for package thormang3_action_module
 * modified motion_4096.bin
   added and modify some actions in motion_4096.bin
 * added thormang3_action_module
-* Contributors: Jay Song, Zerom, Pyo, SCH
+* Contributors: Jay Song, Zerom, SCH, Pyo

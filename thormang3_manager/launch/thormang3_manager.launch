@@ -1,9 +1,8 @@
 <?xml version="1.0" ?>
-
 <launch>    
     <arg name="use_imu" default="true"/>
     <arg name="use_lidar" default="true" />
-    z
+    
     <param name="gazebo"                   value="false"    type="bool"/>
     <param name="gazebo_robot_name"        value="thormang3"/>
     
@@ -23,7 +22,7 @@
     <include file="$(find thormang3_description)/launch/thor_laserscan.launch" if="$(arg use_lidar)"/> 
     
     <!-- THORMANG3 Manager -->
-    <node name="thormang3_manager" pkg="thormang3_manager" type="thormang3_manager" output="screen"/>
+    <node pkg="thormang3_manager" type="thormang3_manager" name="thormang3_manager" output="screen"/>
     
     <!-- Robot Model & TF -->
     <include file="$(find thormang3_description)/launch/thormang3_mpc.launch"/> 
