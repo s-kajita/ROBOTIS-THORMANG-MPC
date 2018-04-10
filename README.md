@@ -33,18 +33,22 @@
 - [thormang3_ppc](https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-PPC)
 - [thormang3_opc](https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-OPC)
 - [thormang3_tools](https://github.com/ROBOTIS-GIT/ROBOTIS-THORMANG-Tools)
+- [manipulator_h](https://github.com/ROBOTIS-GIT/ROBOTIS-MANIPULATOR-H)
+- [rh_p12_rn](https://github.com/ROBOTIS-GIT/RH-P12-RN)
 - [robotis_controller_msgs](https://github.com/ROBOTIS-GIT/ROBOTIS-Framework-msgs)
 - [robotis_framework](https://github.com/ROBOTIS-GIT/ROBOTIS-Framework)
 - [robotis_utility](https://github.com/ROBOTIS-GIT/ROBOTIS-Utility)
 - [robotis_math](https://github.com/ROBOTIS-GIT/ROBOTIS-Math)
 - [dynamixel_sdk](https://github.com/ROBOTIS-GIT/DynamixelSDK)
+- [robotis_op3](https://github.com/ROBOTIS-GIT/ROBOTIS-OP3)
 
 ## Documents and Videos related to ROBOTIS THORMANG3
 - [ROBOTIS e-Manual for ROBOTIS THORMANG3](http://emanual.robotis.com/docs/en/platform/thormang3/introduction/)
 - [ROBOTIS e-Manual for ROBOTIS Manipulator-H](http://emanual.robotis.com/docs/en/platform/manipulator_h/introduction/)
-- [ROBOTIS e-Manual for ROBOTIS OP3](http://emanual.robotis.com/docs/en/platform/op3/introduction/)
+- [ROBOTIS e-Manual for RH-P12-RN](http://emanual.robotis.com/docs/en/platform/rh_p12_rn/)
 - [ROBOTIS e-Manual for ROBOTIS Framework](http://emanual.robotis.com/docs/en/software/robotis_framework_packages/)
 - [ROBOTIS e-Manual for Dynamixel SDK](http://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_sdk/overview/)
+- [ROBOTIS e-Manual for ROBOTIS OP3](http://emanual.robotis.com/docs/en/platform/op3/introduction/)
 
 ## What is THORMANG3?
 THOR (Tactical Hazardous Operations Robot) is an affordable, full size humanoid robot platform with advanced
