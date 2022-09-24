@@ -1,5 +1,5 @@
 [ control info ]
-control_cycle = 30   # milliseconds
+control_cycle = 20   # milliseconds
 #control_cycle = 8   # milliseconds
 
 [ port info ]
