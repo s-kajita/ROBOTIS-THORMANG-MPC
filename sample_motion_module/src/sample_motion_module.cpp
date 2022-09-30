@@ -26,8 +26,8 @@ SampleMotionModule::SampleMotionModule()
   module_name_  = "sample_motion_module"; // set unique module name
   control_mode_ = robotis_framework::PositionControl;
 
-  result_["joint1"] = new robotis_framework::DynamixelState();
-  result_["joint2"] = new robotis_framework::DynamixelState();
+  result_["joint4"]  = new robotis_framework::DynamixelState();
+  result_["joint4s"] = new robotis_framework::DynamixelState();
 
   goal_joint_position_      = Eigen::VectorXd::Zero(2);
   
@@ -96,8 +96,8 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
 
   // ...
 
-  result_["joint1"]->goal_position_ = goal_joint_position_(0);
-  result_["joint2"]->goal_position_ = goal_joint_position_(1);
+  result_["joint4"]->goal_position_ = goal_joint_position_(0);
+//  result_["joint2"]->goal_position_ = goal_joint_position_(1);
 
   //result_["joint1"]->present_position_ = 0;
   //result_["joint2"]->present_position_ = 1;
