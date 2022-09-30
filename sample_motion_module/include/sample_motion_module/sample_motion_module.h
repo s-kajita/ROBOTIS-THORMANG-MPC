@@ -19,7 +19,7 @@
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
-#include <std_msgs/Float32.h>
+#include <std_msgs/Float32MultiArray.h>
 #include <boost/thread.hpp>
 #include <eigen3/Eigen/Eigen>
 
@@ -51,8 +51,7 @@ public:
   virtual ~SampleMotionModule();
 
   /* ROS Topic Callback Functions */
-  void topicCallback(const std_msgs::Float32::ConstPtr &msg);
-  //void topicCallback(const std_msgs::Int16::ConstPtr &msg);
+  void topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg);
 
   void initialize(const int control_cycle_msec, robotis_framework::Robot *robot);
   void process(std::map<std::string, robotis_framework::Dynamixel *> dxls, std::map<std::string, double> sensors);

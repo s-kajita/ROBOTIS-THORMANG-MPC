@@ -26,8 +26,8 @@ SampleMotionModule::SampleMotionModule()
   module_name_  = "sample_motion_module"; // set unique module name
   control_mode_ = robotis_framework::PositionControl;
 
-  result_["joint4"]  = new robotis_framework::DynamixelState();
-  result_["joint4s"] = new robotis_framework::DynamixelState();
+  result_["joint4"] = new robotis_framework::DynamixelState();
+  result_["joint5"] = new robotis_framework::DynamixelState();
 
   goal_joint_position_      = Eigen::VectorXd::Zero(2);
   
@@ -58,21 +58,23 @@ void SampleMotionModule::queueThread()
   sub1_ = ros_node.subscribe("/sample_cmd", 10, &SampleMotionModule::topicCallback, this);
 
   /* publisher */
-  pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
+ // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while(ros_node.ok())
     callback_queue.callAvailable(duration);
 }
 
-void SampleMotionModule::topicCallback(const std_msgs::Float32::ConstPtr &msg)
+void SampleMotionModule::topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg)
 {
-  std_msgs::Float32 std_msg;
-  std_msg.data = msg->data;
-  pub1_.publish(std_msg);
+//  std_msgs::Float32MultiArray std_msg;
+//  std_msg.data = msg->data;
+//  pub1_.publish(std_msg);
   
-  goal_joint_position_(0) = (double)msg->data;
-  fprintf(stderr, "goal_joint_position_(0)=%g\n",goal_joint_position_(0));
+  for(int i=0; i<2; i++){
+    goal_joint_position_(i) = (double)msg->data[i];
+    fprintf(stderr, "goal_joint_position_(%d)=%g\n",i,goal_joint_position_(i));
+  }
 }
 
 
@@ -97,7 +99,7 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
   // ...
 
   result_["joint4"]->goal_position_ = goal_joint_position_(0);
-//  result_["joint2"]->goal_position_ = goal_joint_position_(1);
+  result_["joint5"]->goal_position_ = goal_joint_position_(1);
 
   //result_["joint1"]->present_position_ = 0;
   //result_["joint2"]->present_position_ = 1;
