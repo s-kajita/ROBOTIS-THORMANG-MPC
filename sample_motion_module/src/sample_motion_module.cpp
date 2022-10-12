@@ -26,10 +26,11 @@ SampleMotionModule::SampleMotionModule()
   module_name_  = "sample_motion_module"; // set unique module name
   control_mode_ = robotis_framework::PositionControl;
 
+  result_["joint3"] = new robotis_framework::DynamixelState();
   result_["joint4"] = new robotis_framework::DynamixelState();
   result_["joint5"] = new robotis_framework::DynamixelState();
 
-  goal_joint_position_      = Eigen::VectorXd::Zero(2);
+  goal_joint_position_      = Eigen::VectorXd::Zero(3);
   
   firsttime = true;
 }
@@ -71,7 +72,7 @@ void SampleMotionModule::topicCallback(const std_msgs::Float32MultiArray::ConstP
 //  std_msg.data = msg->data;
 //  pub1_.publish(std_msg);
   
-  for(int i=0; i<2; i++){
+  for(int i = 0; i < goal_joint_position_.size(); i++){
     goal_joint_position_(i) = (double)msg->data[i];
     fprintf(stderr, "goal_joint_position_(%d)=%g\n",i,goal_joint_position_(i));
   }
@@ -98,8 +99,9 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
 
   // ...
 
-  result_["joint4"]->goal_position_ = goal_joint_position_(0);
-  result_["joint5"]->goal_position_ = goal_joint_position_(1);
+  result_["joint3"]->goal_position_ = goal_joint_position_(0);
+  result_["joint4"]->goal_position_ = goal_joint_position_(1);
+  result_["joint5"]->goal_position_ = goal_joint_position_(2);
 
   //result_["joint1"]->present_position_ = 0;
   //result_["joint2"]->present_position_ = 1;
