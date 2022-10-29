@@ -30,7 +30,10 @@ SampleMotionModule::SampleMotionModule()
   result_["joint4"] = new robotis_framework::DynamixelState();
   result_["joint5"] = new robotis_framework::DynamixelState();
 
-  goal_joint_position_      = Eigen::VectorXd::Zero(3);
+  const int NumberOfJoint = 3;
+
+  goal_joint_position_      = Eigen::VectorXd::Zero(NumberOfJoint);
+  start_joint_position_     = Eigen::VectorXd::Zero(NumberOfJoint);
   
   firsttime = true;
 }
@@ -103,8 +106,6 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
   result_["joint4"]->goal_position_ = goal_joint_position_(1);
   result_["joint5"]->goal_position_ = goal_joint_position_(2);
 
-  //result_["joint1"]->present_position_ = 0;
-  //result_["joint2"]->present_position_ = 1;
 }
 
 void SampleMotionModule::stop()
