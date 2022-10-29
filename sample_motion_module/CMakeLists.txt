@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   dynamixel_sdk
   robotis_device
   robotis_framework_common
+  robotis_math
 )
 
 #find_package(Boost REQUIRED COMPONENTS thread)

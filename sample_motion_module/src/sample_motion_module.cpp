@@ -20,7 +20,8 @@
 using namespace thormang3;
 
 SampleMotionModule::SampleMotionModule()
-  : control_cycle_msec_(8)
+  : control_cycle_sec_(0.01),
+  is_moving_(false)
 {
   enable_       = false;
   module_name_  = "sample_motion_module"; // set unique module name
@@ -30,7 +31,7 @@ SampleMotionModule::SampleMotionModule()
   result_["joint4"] = new robotis_framework::DynamixelState();
   result_["joint5"] = new robotis_framework::DynamixelState();
 
-  const int NumberOfJoint = 3;
+  NumberOfJoint = 3;
 
   goal_joint_position_      = Eigen::VectorXd::Zero(NumberOfJoint);
   start_joint_position_     = Eigen::VectorXd::Zero(NumberOfJoint);
@@ -45,7 +46,7 @@ SampleMotionModule::~SampleMotionModule()
 
 void SampleMotionModule::initialize(const int control_cycle_msec, robotis_framework::Robot *robot)
 {
-  control_cycle_msec_ = control_cycle_msec;
+  control_cycle_sec_ = control_cycle_msec * 0.001;
   queue_thread_ = boost::thread(boost::bind(&SampleMotionModule::queueThread, this));
 
   fprintf(stderr, "sample_motion_module:initialize()\n");
@@ -64,7 +65,7 @@ void SampleMotionModule::queueThread()
   /* publisher */
  // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
 
-  ros::WallDuration duration(control_cycle_msec_ / 1000.0);
+  ros::WallDuration duration(control_cycle_sec_);
   while(ros_node.ok())
     callback_queue.callAvailable(duration);
 }
@@ -82,6 +83,62 @@ void SampleMotionModule::topicCallback(const std_msgs::Float32MultiArray::ConstP
 }
 
 
+void SampleMotionModule::jointTrajGenerateProc()
+{
+#if 0
+  if (goal_joint_pose_msg_.time <= 0.0)
+  {
+    /* set movement time */
+    double tol        = 10 * DEGREE2RADIAN; // rad per sec
+    double mov_time   = 2.0;
+
+    int    id    = joint_name_to_id_[goal_joint_pose_msg_.name];
+
+    double ini_value  = goal_joint_position_(id);
+    double tar_value  = goal_joint_pose_msg_.value;
+    double diff       = fabs(tar_value - ini_value);
+
+    mov_time_ = diff / tol;
+    int _all_time_steps = int(floor((mov_time_ / control_cycle_sec_) + 1.0));
+    mov_time_ = double(_all_time_steps - 1) * control_cycle_sec_;
+
+    if (mov_time_ < mov_time)
+      mov_time_ = mov_time;
+  }
+  else
+  {
+    mov_time_ = goal_joint_pose_msg_.time;
+  }
+#endif
+
+  mov_time_ = 3.0;  /* s */  
+
+  all_time_steps_ = int(mov_time_ / control_cycle_sec_) + 1;
+
+  goal_joint_tra_.resize(all_time_steps_, NumberOfJoint);
+
+
+  /* calculate joint trajectory */
+  for (int j = 0; j < goal_joint_position_.size(); j++)
+  {
+    double ini_value = goal_joint_position_(j);
+    double tar_value = (double)goal_joint_pose_msg_.data[j];
+
+    Eigen::MatrixXd tra = robotis_framework::calcMinimumJerkTra(ini_value, 0.0, 0.0, tar_value, 0.0, 0.0,
+                                                                control_cycle_sec_,
+                                                                mov_time_);
+
+    goal_joint_tra_.block(0, j, all_time_steps_, 1) = tra;
+  }
+
+  cnt_        = 0;
+  is_moving_  = true;
+
+  ROS_INFO("[start] send trajectory");
+}
+
+
+
 void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
                                    std::map<std::string, double> sensors)
 {
@@ -89,16 +146,29 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
     return;
 
   if (firsttime ){
+    // ----------  set goal_joint_position_ as the initial pose  ------------- 
+    int j=0;
+    for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
+         state_iter != result_.end(); 
+         state_iter++)
+    {
+      std::string joint_name = state_iter->first;
+
+      robotis_framework::Dynamixel *dxl = NULL;
+      std::map<std::string, robotis_framework::Dynamixel*>::iterator dxl_it = dxls.find(joint_name);
+      if (dxl_it != dxls.end())
+        dxl = dxl_it->second;
+      else
+        continue;
+
+      goal_joint_position_(j) = dxl->dxl_state_->present_position_;
+      j++;
+    } 
+    
     firsttime = false;
-    fprintf(stderr, "sample_motion_module: enable\n");
+    fprintf(stderr, "sample_motion_module: enable\n");    
   }
-  
-  for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin(); state_iter != result_.end();
-      state_iter++)
-  {
-    int32_t p_pos = dxls[state_iter->first]->dxl_state_->present_position_;
-    int32_t g_pos = dxls[state_iter->first]->dxl_state_->goal_position_;
-  }
+
 
   // ...
 

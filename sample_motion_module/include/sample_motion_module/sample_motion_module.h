@@ -24,6 +24,7 @@
 #include <eigen3/Eigen/Eigen>
 
 #include "robotis_framework_common/motion_module.h"
+#include "robotis_math/robotis_math.h"
 
 namespace thormang3
 {
@@ -32,20 +33,6 @@ class SampleMotionModule
   : public robotis_framework::MotionModule,
     public robotis_framework::Singleton<SampleMotionModule>
 {
-private:
-  int           control_cycle_msec_;
-  boost::thread queue_thread_;
-
-  /* sample subscriber & publisher */
-  ros::Subscriber sub1_;
-  ros::Publisher  pub1_;
-
-  void queueThread();
-
-  Eigen::VectorXd goal_joint_position_;
-
-  bool firsttime;
-  
 public:
   SampleMotionModule();
   virtual ~SampleMotionModule();
@@ -53,11 +40,44 @@ public:
   /* ROS Topic Callback Functions */
   void topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg);
 
+  /* ROS Calculation Functions */
+  void jointTrajGenerateProc();  
+
+  /* ROS Framework Functions */
   void initialize(const int control_cycle_msec, robotis_framework::Robot *robot);
   void process(std::map<std::string, robotis_framework::Dynamixel *> dxls, std::map<std::string, double> sensors);
 
   void stop();
   bool isRunning();
+  
+  
+private:
+  double  control_cycle_sec_;
+  boost::thread queue_thread_;
+
+  /* sample subscriber & publisher */
+  ros::Subscriber sub1_;
+  ros::Publisher  pub1_;
+
+  std_msgs::Float32MultiArray goal_joint_pose_msg_;
+
+  void queueThread();
+
+  Eigen::VectorXd goal_joint_position_;
+  Eigen::VectorXd start_joint_position_;
+
+  bool firsttime;
+  
+  /* trajectory */
+  int	  NumberOfJoint;
+  bool    is_moving_;
+  double  mov_time_;
+  int     cnt_;
+  int     all_time_steps_;
+
+  Eigen::MatrixXd goal_joint_tra_;
+  
+
 };
 
 }
