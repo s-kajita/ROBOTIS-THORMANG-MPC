@@ -39,6 +39,7 @@ public:
 
   /* ROS Topic Callback Functions */
   void topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg);
+  void jointPoseMsgCallback(const std_msgs::Float32MultiArray::ConstPtr &msg);
 
   /* ROS Calculation Functions */
   void jointTrajGenerateProc();  
@@ -54,7 +55,8 @@ public:
 private:
   double  control_cycle_sec_;
   boost::thread queue_thread_;
-
+  boost::thread  *traj_generate_tread_;
+ 
   /* sample subscriber & publisher */
   ros::Subscriber sub1_;
   ros::Publisher  pub1_;

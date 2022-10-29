@@ -61,6 +61,8 @@ void SampleMotionModule::queueThread()
 
   /* subscriber */
   sub1_ = ros_node.subscribe("/sample_cmd", 10, &SampleMotionModule::topicCallback, this);
+  ros::Subscriber joint_pose_msg_sub = ros_node.subscribe("/joint_pose_msg", 5,
+                                                          &SampleMotionModule::jointPoseMsgCallback, this);
 
   /* publisher */
  // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
@@ -69,6 +71,8 @@ void SampleMotionModule::queueThread()
   while(ros_node.ok())
     callback_queue.callAvailable(duration);
 }
+
+/* -------------------- Callback ---------------------------- */
 
 void SampleMotionModule::topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg)
 {
@@ -82,6 +86,23 @@ void SampleMotionModule::topicCallback(const std_msgs::Float32MultiArray::ConstP
   }
 }
 
+void SampleMotionModule::jointPoseMsgCallback(const std_msgs::Float32MultiArray::ConstPtr &msg)
+{
+  if (enable_ == false)
+    return;
+
+  goal_joint_pose_msg_ = *msg;
+
+  if (is_moving_ == false)
+  {
+    traj_generate_tread_ = new boost::thread(boost::bind(&SampleMotionModule::jointTrajGenerateProc, this));
+    delete traj_generate_tread_;
+  }
+  else
+    ROS_INFO("previous task is alive");
+
+  return;
+}
 
 void SampleMotionModule::jointTrajGenerateProc()
 {
@@ -137,7 +158,7 @@ void SampleMotionModule::jointTrajGenerateProc()
   ROS_INFO("[start] send trajectory");
 }
 
-
+/* =================================== MAIN PROCESS ===================================== */ 
 
 void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
                                    std::map<std::string, double> sensors)
@@ -152,12 +173,12 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
          state_iter != result_.end(); 
          state_iter++)
     {
-      std::string joint_name = state_iter->first;
+      std::string joint_name = state_iter->first;  // first field = joint name
 
       robotis_framework::Dynamixel *dxl = NULL;
       std::map<std::string, robotis_framework::Dynamixel*>::iterator dxl_it = dxls.find(joint_name);
       if (dxl_it != dxls.end())
-        dxl = dxl_it->second;
+        dxl = dxl_it->second;     // second field = dynamixel pointer
       else
         continue;
 
