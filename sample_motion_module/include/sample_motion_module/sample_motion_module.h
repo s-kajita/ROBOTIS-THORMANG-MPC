@@ -39,7 +39,6 @@ public:
 
   /* ROS Topic Callback Functions */
   void topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg);
-  void jointPoseMsgCallback(const std_msgs::Float32MultiArray::ConstPtr &msg);
 
   /* ROS Calculation Functions */
   void jointTrajGenerateProc();  
@@ -53,6 +52,8 @@ public:
   
   
 private:
+	int			int_time;
+	double 	dbl_time;
   double  control_cycle_sec_;
   boost::thread queue_thread_;
   boost::thread  *traj_generate_tread_;
@@ -65,8 +66,12 @@ private:
 
   void queueThread();
 
-  Eigen::VectorXd goal_joint_position_;
-  Eigen::VectorXd start_joint_position_;
+  Eigen::VectorXd goal_pose;
+  Eigen::VectorXd start_pose;
+  Eigen::VectorXd pose;
+  double start_time;
+  double T_interp;
+	double s_interp;
 
   bool firsttime;
   
@@ -77,7 +82,6 @@ private:
   int     cnt_;
   int     all_time_steps_;
 
-  Eigen::MatrixXd goal_joint_tra_;
   
 
 };
