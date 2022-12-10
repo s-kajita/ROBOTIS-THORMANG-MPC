@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>motion_module_rleg</name>
+  <version>0.0.1</version>
+  <description>The motion_module_rleg package</description>
+
+  <maintainer email="shuuji.kajita@gmail.com">Shuuji Kajita</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>robotis_device</build_depend>
+  <build_depend>robotis_framework_common</build_depend>
+
+  <exec_depend>roscpp</exec_depend>
+
+</package>

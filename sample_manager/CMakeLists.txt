@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   thormang3_action_module
   sample_sensor_module
   sample_motion_module
+  motion_module_rleg
 )
 
 ################################################
@@ -37,6 +38,7 @@ catkin_package(
     thormang3_action_module
     sample_sensor_module
     sample_motion_module
+    motion_module_rleg
 )
 
 ###########

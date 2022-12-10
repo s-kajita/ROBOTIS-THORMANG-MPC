@@ -15,28 +15,25 @@
 *******************************************************************************/
 
 #include <stdio.h>
-#include "sample_motion_module/sample_motion_module.h"
+#include "motion_module_rleg/motion_module_rleg.h"
 
 using namespace thormang3;
 
-SampleMotionModule::SampleMotionModule()
+MotionModuleRleg::MotionModuleRleg()
   : control_cycle_sec_(0.01),
   is_moving_(false)
 {
   enable_       = false;
-  module_name_  = "sample_motion_module"; // set unique module name
+  module_name_  = "motion_module_rleg"; // set unique module name
   control_mode_ = robotis_framework::PositionControl;
 
 	int_time = 0;
 	dbl_time = 0.0;
 	
-	result_["joint1"] = new robotis_framework::DynamixelState();
-  result_["joint2"] = new robotis_framework::DynamixelState();
-  result_["joint3"] = new robotis_framework::DynamixelState();
-  result_["joint4"] = new robotis_framework::DynamixelState();
-  result_["joint5"] = new robotis_framework::DynamixelState();
+	result_["joint7"] = new robotis_framework::DynamixelState();
+  result_["joint8"] = new robotis_framework::DynamixelState();
 
-  NumberOfJoint = 5;
+  NumberOfJoint = 2;
 
   goal_pose  = Eigen::VectorXd::Zero(NumberOfJoint);
   start_pose = Eigen::VectorXd::Zero(NumberOfJoint);
@@ -48,23 +45,23 @@ SampleMotionModule::SampleMotionModule()
   firsttime = true;
 }
 
-SampleMotionModule::~SampleMotionModule()
+MotionModuleRleg::~MotionModuleRleg()
 {
   queue_thread_.join();
 }
 
-void SampleMotionModule::initialize(const int control_cycle_msec, robotis_framework::Robot *robot)
+void MotionModuleRleg::initialize(const int control_cycle_msec, robotis_framework::Robot *robot)
 {
 	int_time = 0;
 	dbl_time = 0.0;
 	
   control_cycle_sec_ = control_cycle_msec * 0.001;
-  queue_thread_ = boost::thread(boost::bind(&SampleMotionModule::queueThread, this));
+  queue_thread_ = boost::thread(boost::bind(&MotionModuleRleg::queueThread, this));
 
-  fprintf(stderr, "sample_motion_module:initialize()\n");
+  fprintf(stderr, "motion_module_rleg:initialize()\n");
 }
 
-void SampleMotionModule::queueThread()
+void MotionModuleRleg::queueThread()
 {
   ros::NodeHandle ros_node;
   ros::CallbackQueue callback_queue;
@@ -72,7 +69,7 @@ void SampleMotionModule::queueThread()
   ros_node.setCallbackQueue(&callback_queue);
 
   /* subscriber */
-  sub1_ = ros_node.subscribe("/sample_cmd", 10, &SampleMotionModule::topicCallback, this);
+  sub1_ = ros_node.subscribe("/rleg_cmd", 10, &MotionModuleRleg::topicCallback, this);
 
   /* publisher */
  // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
@@ -84,7 +81,7 @@ void SampleMotionModule::queueThread()
 
 /* -------------------- Callback ---------------------------- */
 
-void SampleMotionModule::topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg)
+void MotionModuleRleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg)
 {
 //  std_msgs::Float32MultiArray std_msg;
 //  std_msg.data = msg->data;
@@ -106,7 +103,7 @@ void SampleMotionModule::topicCallback(const std_msgs::Float32MultiArray::ConstP
 
 /* =================================== MAIN PROCESS ===================================== */ 
 
-void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
+void MotionModuleRleg::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
                                    std::map<std::string, double> sensors)
 {
   if (enable_ == false)
@@ -140,7 +137,7 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
     s_interp = 1.0;
     
     firsttime = false;
-    fprintf(stderr, "sample_motion_module: enable\n");    
+    fprintf(stderr, "motion_module_rleg: enable\n");    
   }
 
 
@@ -157,20 +154,17 @@ void SampleMotionModule::process(std::map<std::string, robotis_framework::Dynami
   	
   pose = (1.0-s_interp)*start_pose + s_interp*goal_pose;
 
-  result_["joint1"]->goal_position_ = pose(0);
-  result_["joint2"]->goal_position_ = pose(1);
-  result_["joint3"]->goal_position_ = pose(2);
-  result_["joint4"]->goal_position_ = pose(3);
-  result_["joint5"]->goal_position_ = pose(4);
+  result_["joint7"]->goal_position_ = pose(0);
+  result_["joint8"]->goal_position_ = pose(1);
 
 }
 
-void SampleMotionModule::stop()
+void MotionModuleRleg::stop()
 {
   return;
 }
 
-bool SampleMotionModule::isRunning()
+bool MotionModuleRleg::isRunning()
 {
   return false;
 }

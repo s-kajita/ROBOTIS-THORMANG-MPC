@@ -1,3 +1,32 @@
+joint1 :   # XM540-W270-R (hip roll)
+   return_delay_time     :  250    # item name : value
+   operating_mode        :  3
+   shutdown              :  52
+   homing_offset         :  0
+   current_limit         :  2047   # current limit
+   max_position_limit    :  4095
+   min_position_limit    :  0
+   goal_current          : 2047   # goal current
+   goal_velocity         : 128
+   position_p_gain       : 800
+   velocity_p_gain       : 100
+   velocity_i_gain       : 1920
+
+joint1s :   # XM540-W270-R (hip roll slave)
+   return_delay_time     :  250    # item name : value
+   drive_mode            :  2      # [slave mode] 
+   operating_mode        :  3
+   shutdown              :  52
+   homing_offset         :  0
+   current_limit         :  2047   # current limit
+   max_position_limit    :  4095
+   min_position_limit    :  0
+   goal_current          : 2047   # goal current
+   goal_velocity         : 128
+   position_p_gain       : 800
+   velocity_p_gain       : 100
+   velocity_i_gain       : 1920
+
 joint2 :   # XM540-W270-R (hip pitch)
    return_delay_time     :  250    # item name : value
    operating_mode        :  3
