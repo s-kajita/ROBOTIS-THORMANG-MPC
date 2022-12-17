@@ -55,8 +55,8 @@
   <build_depend>thormang3_base_module</build_depend>
   <build_depend>thormang3_action_module</build_depend>
   <build_depend>sample_sensor_module</build_depend>
-  <build_depend>sample_motion_module</build_depend>
   <build_depend>motion_module_rleg</build_depend>
+  <build_depend>motion_module_lleg</build_depend>
   
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
@@ -64,7 +64,6 @@
   <exec_depend>thormang3_base_module</exec_depend>
   <exec_depend>thormang3_action_module</exec_depend>
   <exec_depend>sample_sensor_module</exec_depend>
-  <exec_depend>sample_motion_module</exec_depend>
 	<exec_depend>motion_module_rleg</exec_depend>
-
+	<exec_depend>motion_module_lleg</exec_depend>
 </package>
