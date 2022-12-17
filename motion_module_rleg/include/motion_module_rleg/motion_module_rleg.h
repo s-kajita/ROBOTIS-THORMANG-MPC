@@ -52,8 +52,8 @@ public:
   
   
 private:
-	int			int_time;
-	double 	dbl_time;
+	int			iTime;
+	double 	Time;
   double  control_cycle_sec_;
   boost::thread queue_thread_;
   boost::thread  *traj_generate_tread_;
@@ -66,6 +66,8 @@ private:
 
   void queueThread();
 
+	std::vector<std::string> JointNameList;
+
   Eigen::VectorXd goal_pose;
   Eigen::VectorXd start_pose;
   Eigen::VectorXd pose;
@@ -76,7 +78,6 @@ private:
   bool firsttime;
   
   /* trajectory */
-  int	  NumberOfJoint;
   bool    is_moving_;
   double  mov_time_;
   int     cnt_;
