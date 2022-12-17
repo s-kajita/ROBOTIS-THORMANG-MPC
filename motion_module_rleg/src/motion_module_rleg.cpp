@@ -30,8 +30,8 @@ MotionModuleRleg::MotionModuleRleg()
 	int_time = 0;
 	dbl_time = 0.0;
 	
-	result_["joint7"] = new robotis_framework::DynamixelState();
-  result_["joint8"] = new robotis_framework::DynamixelState();
+	result_["joint1"] = new robotis_framework::DynamixelState();
+  result_["joint2"] = new robotis_framework::DynamixelState();
 
   NumberOfJoint = 2;
 
@@ -92,7 +92,7 @@ void MotionModuleRleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr
   
   for(int i = 0; i < goal_pose.size(); i++){
     goal_pose(i) = (double)msg->data[i];
-    fprintf(stderr, "goal_pose(%d)=%g\n",i,goal_pose(i));
+    fprintf(stderr, "right leg goal_pose(%d)=%g\n",i,goal_pose(i));
   }
   
   T_interp = 2.0;
@@ -154,8 +154,8 @@ void MotionModuleRleg::process(std::map<std::string, robotis_framework::Dynamixe
   	
   pose = (1.0-s_interp)*start_pose + s_interp*goal_pose;
 
-  result_["joint7"]->goal_position_ = pose(0);
-  result_["joint8"]->goal_position_ = pose(1);
+  result_["joint1"]->goal_position_ = pose(0);
+  result_["joint2"]->goal_position_ = pose(1);
 
 }
 
