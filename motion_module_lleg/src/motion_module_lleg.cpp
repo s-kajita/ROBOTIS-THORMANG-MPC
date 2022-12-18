@@ -27,19 +27,19 @@ MotionModuleLleg::MotionModuleLleg()
   module_name_  = "motion_module_lleg"; // set unique module name
   control_mode_ = robotis_framework::PositionControl;
 
-	int_time = 0;
-	dbl_time = 0.0;
+	iTime = 0;
+	Time = 0.0;
 	
-	result_["joint7"]  = new robotis_framework::DynamixelState();
-  result_["joint8"]  = new robotis_framework::DynamixelState();
-	result_["joint9"]  = new robotis_framework::DynamixelState();
-  result_["joint10"] = new robotis_framework::DynamixelState();
-	result_["joint11"] = new robotis_framework::DynamixelState();
+	JointNameList.clear();
+	JointNameList.push_back("joint7");
+	JointNameList.push_back("joint8");
+	JointNameList.push_back("joint9");
+	JointNameList.push_back("joint10");	
+	JointNameList.push_back("joint11");
+		
 
-  NumberOfJoint = 5;
-
-  goal_pose  = Eigen::VectorXd::Zero(NumberOfJoint);
-  start_pose = Eigen::VectorXd::Zero(NumberOfJoint);
+  goal_pose  = Eigen::VectorXd::Zero(JointNameList.size());
+  start_pose = Eigen::VectorXd::Zero(JointNameList.size());
 
 	start_time = 0.0;
   T_interp   = 1.0;
@@ -55,13 +55,13 @@ MotionModuleLleg::~MotionModuleLleg()
 
 void MotionModuleLleg::initialize(const int control_cycle_msec, robotis_framework::Robot *robot)
 {
-	int_time = 0;
-	dbl_time = 0.0;
+	iTime = 0;
+	Time = 0.0;
 	
   control_cycle_sec_ = control_cycle_msec * 0.001;
   queue_thread_ = boost::thread(boost::bind(&MotionModuleLleg::queueThread, this));
 
-  fprintf(stderr, "motion_module_lleg:initialize()\n");
+  fprintf(stderr, "%s:initialize()\n",module_name_.c_str());
 }
 
 void MotionModuleLleg::queueThread()
@@ -90,7 +90,7 @@ void MotionModuleLleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr
 //  std_msg.data = msg->data;
 //  pub1_.publish(std_msg);
 
-	start_time = dbl_time;
+	start_time = Time;
 	start_pose = goal_pose;
   
   for(int i = 0; i < goal_pose.size(); i++){
@@ -112,18 +112,14 @@ void MotionModuleLleg::process(std::map<std::string, robotis_framework::Dynamixe
   if (enable_ == false)
     return;
 
-	dbl_time = int_time * control_cycle_sec_;
-	int_time++;
+	Time = iTime * control_cycle_sec_;
+	iTime++;
 
   if (firsttime ){
     // ----------  set goal_pose as the initial pose  ------------- 
-    int j=0;
-    for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
-         state_iter != result_.end(); 
-         state_iter++)
-    {
-    	std::string joint_name = state_iter->first;  // first field = joint name
-    
+ 		for( int j=0; j < JointNameList.size(); j++){
+			std::string joint_name = JointNameList[j];
+			
       robotis_framework::Dynamixel *dxl = NULL;
       std::map<std::string, robotis_framework::Dynamixel*>::iterator dxl_it = dxls.find(joint_name);
       if (dxl_it != dxls.end())
@@ -131,12 +127,8 @@ void MotionModuleLleg::process(std::map<std::string, robotis_framework::Dynamixe
       else
         continue;
 
-			fprintf(stderr, "joint %d: %s \n",j,joint_name.c_str());
-
-      start_pose(j) = dxl->dxl_state_->present_position_;
-      j++;
-    } 
-    fprintf(stderr, "number of active joints = %d\n",j);
+      start_pose(j) = dxl->dxl_state_->present_position_;		
+		}
     
 		for(int i = 0; i < start_pose.size(); i++){
 		  fprintf(stderr, "left leg start_pose(%d)=%g\n",i,start_pose(i));
@@ -156,11 +148,11 @@ void MotionModuleLleg::process(std::map<std::string, robotis_framework::Dynamixe
 
 
   // ...
-  if( dbl_time < start_time){
+  if( Time < start_time){
   	s_interp = 0.0;
   }
-  else if( dbl_time < start_time+T_interp ){
-  	s_interp = (dbl_time-start_time)/T_interp;
+  else if( Time < start_time+T_interp ){
+  	s_interp = (Time-start_time)/T_interp;
   }
   else {
   	s_interp = 1.0;
@@ -168,11 +160,10 @@ void MotionModuleLleg::process(std::map<std::string, robotis_framework::Dynamixe
   	
   pose = (1.0-s_interp)*start_pose + s_interp*goal_pose;
 
-  result_["joint7"]->goal_position_  = pose(0);
-  result_["joint8"]->goal_position_  = pose(1);
-  result_["joint9"]->goal_position_  = pose(2);
-  result_["joint10"]->goal_position_ = pose(3);
-  result_["joint11"]->goal_position_ = pose(4);
+	for( int j=0; j < JointNameList.size(); j++){
+		std::string jname = JointNameList[j];
+		result_[jname]->goal_position_ = pose(j);
+	}
 
 }
 

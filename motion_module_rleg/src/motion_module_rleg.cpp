@@ -118,27 +118,6 @@ void MotionModuleRleg::process(std::map<std::string, robotis_framework::Dynamixe
 
   if (firsttime ){
     // ----------  set goal_pose as the initial pose  ------------- 
-#if 0    
-    int j=0;
-    for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
-         state_iter != result_.end(); 
-         state_iter++)
-    {
-    	std::string joint_name = state_iter->first;  // first field = joint name
-    
-      robotis_framework::Dynamixel *dxl = NULL;
-      std::map<std::string, robotis_framework::Dynamixel*>::iterator dxl_it = dxls.find(joint_name);
-      if (dxl_it != dxls.end())
-        dxl = dxl_it->second;     // second field = dynamixel pointer
-      else
-        continue;
-
-      start_pose(j) = dxl->dxl_state_->present_position_;
-      j++;
-    } 
-    fprintf(stderr, "number of active joints = %d\n",j);
-#endif
-
 		for( int j=0; j < JointNameList.size(); j++){
 			std::string joint_name = JointNameList[j];
 			
@@ -178,9 +157,6 @@ void MotionModuleRleg::process(std::map<std::string, robotis_framework::Dynamixe
 		result_[jname]->goal_position_ = pose(j);
 	}
 		
-  //result_["joint1"]->goal_position_ = pose(0);
-  //result_["joint2"]->goal_position_ = pose(1);
-
 }
 
 void MotionModuleRleg::stop()
