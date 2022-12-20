@@ -34,7 +34,10 @@ MotionModuleRleg::MotionModuleRleg()
 	JointNameList.clear();
 	JointNameList.push_back("joint1");
 	JointNameList.push_back("joint2");
-	
+	JointNameList.push_back("joint3");
+	JointNameList.push_back("joint4");
+	JointNameList.push_back("joint5");
+				
 	for( auto jname : JointNameList ){
 		result_[jname] = new robotis_framework::DynamixelState();
 	}
