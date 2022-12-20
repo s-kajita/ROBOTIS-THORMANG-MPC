@@ -37,6 +37,9 @@ MotionModuleLleg::MotionModuleLleg()
 	JointNameList.push_back("joint10");	
 	JointNameList.push_back("joint11");
 		
+	for( auto jname : JointNameList ){
+		result_[jname] = new robotis_framework::DynamixelState();
+	}
 
   goal_pose  = Eigen::VectorXd::Zero(JointNameList.size());
   start_pose = Eigen::VectorXd::Zero(JointNameList.size());
