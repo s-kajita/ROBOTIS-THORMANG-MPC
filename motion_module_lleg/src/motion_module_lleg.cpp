@@ -31,6 +31,7 @@ MotionModuleLleg::MotionModuleLleg()
 	Time = 0.0;
 	
 	JointNameList.clear();
+	JointNameList.push_back("joint6");
 	JointNameList.push_back("joint7");
 	JointNameList.push_back("joint8");
 	JointNameList.push_back("joint9");
@@ -96,9 +97,16 @@ void MotionModuleLleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr
 	start_time = Time;
 	start_pose = goal_pose;
   
+  fprintf(stderr, "left leg goal_pose = [");
   for(int i = 0; i < goal_pose.size(); i++){
     goal_pose(i) = (double)msg->data[i];
-    fprintf(stderr, "left leg goal_pose(%d)=%g\n",i,goal_pose(i));
+    fprintf(stderr, " %g ",goal_pose(i));
+    if( i != goal_pose.size() -1 ){
+    	fprintf(stderr, ",");
+    }
+    else{
+    	fprintf(stderr, "]\n");
+    }	
   }
   
   T_interp = 2.0;

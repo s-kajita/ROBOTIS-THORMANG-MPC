@@ -7,6 +7,7 @@ control_cycle = 10   # milliseconds
 
 [ device info ]
 # TYPE    | PORT NAME    | ID   | MODEL          | PROTOCOL | DEV NAME    | BULK READ ITEMS
+dynamixel | /dev/ttyUSB1 | 13   | XM540-W270     | 2.0      | joint6      | present_position, present_current
 dynamixel | /dev/ttyUSB1 | 14   | XM540-W270     | 2.0      | joint7      | present_position, present_current
 dynamixel | /dev/ttyUSB1 | 15   | XM540-W270     | 2.0      | joint7s     | present_position, present_current
 dynamixel | /dev/ttyUSB1 | 16   | XM540-W270     | 2.0      | joint8      | present_position, present_current
