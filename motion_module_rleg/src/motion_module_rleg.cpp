@@ -77,8 +77,9 @@ void MotionModuleRleg::queueThread()
   ros_node.setCallbackQueue(&callback_queue);
 
   /* subscriber */
-  sub1_ = ros_node.subscribe("/rleg_cmd", 10, &MotionModuleRleg::topicCallback, this);
-
+  sub_poseData = ros_node.subscribe("/rleg_cmd",  10, &MotionModuleRleg::poseData_callback, this);
+  sub_poseName = ros_node.subscribe("/rleg_name", 10, &MotionModuleRleg::poseName_callback, this);
+  
   /* publisher */
  // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
 
@@ -89,12 +90,8 @@ void MotionModuleRleg::queueThread()
 
 /* -------------------- Callback ---------------------------- */
 
-void MotionModuleRleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg)
+void MotionModuleRleg::poseData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg)
 {
-//  std_msgs::Float32MultiArray std_msg;
-//  std_msg.data = msg->data;
-//  pub1_.publish(std_msg);
-
 	start_time = Time;
 	start_pose = goal_pose;
   
@@ -112,6 +109,32 @@ void MotionModuleRleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr
   
   T_interp = 2.0;
   s_interp = 0.0;
+}
+
+void MotionModuleRleg::poseName_callback(const std_msgs::String::ConstPtr &msg)
+{
+
+	fprintf(stderr, "pose name = %s \n",msg->data.c_str());
+
+#if 0
+	start_time = Time;
+	start_pose = goal_pose;
+  
+  fprintf(stderr, "right leg goal_pose = [");
+  for(int i = 0; i < goal_pose.size(); i++){
+    goal_pose(i) = (double)msg->data[i];
+    fprintf(stderr, " %g ", goal_pose(i));
+    if( i != goal_pose.size()-1){
+    	fprintf(stderr, ",");
+    }
+    else {
+    	fprintf(stderr, "]\n");
+    }
+  }
+  
+  T_interp = 2.0;
+  s_interp = 0.0;
+#endif
 }
 
 
