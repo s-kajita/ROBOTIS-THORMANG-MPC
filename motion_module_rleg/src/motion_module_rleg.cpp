@@ -84,8 +84,8 @@ void MotionModuleRleg::queueThread()
   ros_node.setCallbackQueue(&callback_queue);
 
   /* subscriber */
-  sub_poseData = ros_node.subscribe("/rleg_cmd",  10, &MotionModuleRleg::poseData_callback, this);
-  sub_poseName = ros_node.subscribe("/rleg_name", 10, &MotionModuleRleg::poseName_callback, this);
+  sub_cmdData  = ros_node.subscribe("/rleg_cmd",  10, &MotionModuleRleg::cmdData_callback, this);
+  sub_poseName = ros_node.subscribe("/rleg_pose", 10, &MotionModuleRleg::poseName_callback, this);
   
   /* publisher */
  // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
@@ -97,7 +97,7 @@ void MotionModuleRleg::queueThread()
 
 /* -------------------- Callback ---------------------------- */
 
-void MotionModuleRleg::poseData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg)
+void MotionModuleRleg::cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg)
 {
 	start_time = Time;
 	start_pose = goal_pose;

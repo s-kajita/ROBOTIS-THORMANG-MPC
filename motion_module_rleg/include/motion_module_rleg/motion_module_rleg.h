@@ -39,7 +39,7 @@ public:
   virtual ~MotionModuleRleg();
 
   /* ROS Topic Callback Functions */
-  void poseData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);		// topic /rleg_cmd
+  void cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);		// topic /rleg_cmd
 	void poseName_callback(const std_msgs::String::ConstPtr &msg);							// topic /rleg_name
 
   /* ROS Calculation Functions */
@@ -61,11 +61,9 @@ private:
   boost::thread  *traj_generate_tread_;
  
   /* sample subscriber & publisher */
-  ros::Subscriber sub_poseData;
+  ros::Subscriber sub_cmdData;
   ros::Subscriber	sub_poseName;
-  ros::Publisher  pub1_;
-
-  std_msgs::Float32MultiArray goal_joint_pose_msg_;
+  //ros::Publisher  pub1_;
 
   void queueThread();
 
