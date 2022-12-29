@@ -49,7 +49,14 @@ MotionModuleRleg::MotionModuleRleg()
 	start_time = 0.0;
   T_interp   = 1.0;
   s_interp   = 0.0;
-  
+
+	// set pose command and pose data
+	PoseNameList.clear(); PoseList.clear();
+	Eigen::VectorXd pose(JointNameList.size()); 
+	
+	PoseNameList.push_back("initial"); pose << -0.2, 0,    0, -0.85,    0, 0; PoseList.push_back(pose);
+	PoseNameList.push_back("squat");   pose << -0.2, 0, -0.5,  0.15, -0.5, 0; PoseList.push_back(pose);
+	  
   firsttime = true;
 }
 
@@ -115,26 +122,25 @@ void MotionModuleRleg::poseName_callback(const std_msgs::String::ConstPtr &msg)
 {
 
 	fprintf(stderr, "pose name = %s \n",msg->data.c_str());
-
-#if 0
-	start_time = Time;
-	start_pose = goal_pose;
-  
-  fprintf(stderr, "right leg goal_pose = [");
-  for(int i = 0; i < goal_pose.size(); i++){
-    goal_pose(i) = (double)msg->data[i];
-    fprintf(stderr, " %g ", goal_pose(i));
-    if( i != goal_pose.size()-1){
-    	fprintf(stderr, ",");
-    }
-    else {
-    	fprintf(stderr, "]\n");
-    }
-  }
-  
-  T_interp = 2.0;
-  s_interp = 0.0;
-#endif
+	
+	int i;
+	for(i = 0; i < PoseNameList.size(); i++){
+		if( msg->data == PoseNameList[i] ){
+			std::cout << PoseList[i].transpose() << std::endl;
+			
+			start_time = Time;
+			start_pose = goal_pose;
+			goal_pose  = PoseList[i];
+			
+			T_interp = 2.0;
+			s_interp = 0.0;
+			break;
+		}
+	}
+	if( i == PoseNameList.size() ){
+		std::cout << msg->data << " doesn't exist." << std::endl;
+	}
+	
 }
 
 

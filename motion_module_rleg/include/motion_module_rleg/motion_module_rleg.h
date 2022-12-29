@@ -39,8 +39,8 @@ public:
   virtual ~MotionModuleRleg();
 
   /* ROS Topic Callback Functions */
-  void poseData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);
-	void poseName_callback(const std_msgs::String::ConstPtr &msg);
+  void poseData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);		// topic /rleg_cmd
+	void poseName_callback(const std_msgs::String::ConstPtr &msg);							// topic /rleg_name
 
   /* ROS Calculation Functions */
   void jointTrajGenerateProc();  
@@ -70,6 +70,9 @@ private:
   void queueThread();
 
 	std::vector<std::string> JointNameList;
+	
+	std::vector<std::string> PoseNameList;				// topic /rleg_name  command name
+	std::vector<Eigen::VectorXd> PoseList;		// topic /rleg_name  pose data
 
   Eigen::VectorXd goal_pose;
   Eigen::VectorXd start_pose;
