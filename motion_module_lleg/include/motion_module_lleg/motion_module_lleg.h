@@ -20,6 +20,7 @@
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/String.h>
 #include <boost/thread.hpp>
 #include <eigen3/Eigen/Eigen>
 
@@ -38,7 +39,8 @@ public:
   virtual ~MotionModuleLleg();
 
   /* ROS Topic Callback Functions */
-  void topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg);
+  void cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);		// topic /lleg_cmd
+	void poseName_callback(const std_msgs::String::ConstPtr &msg);							// topic /lleg_name  
 
   /* ROS Calculation Functions */
   void jointTrajGenerateProc();  
@@ -59,14 +61,16 @@ private:
   boost::thread  *traj_generate_tread_;
  
   /* sample subscriber & publisher */
-  ros::Subscriber sub1_;
-  ros::Publisher  pub1_;
-
-  std_msgs::Float32MultiArray goal_joint_pose_msg_;
+  ros::Subscriber sub_cmdData;
+  ros::Subscriber	sub_poseName;  
+  //ros::Publisher  pub1_;
 
   void queueThread();
 
 	std::vector<std::string> JointNameList;
+
+	std::vector<std::string> PoseNameList;		// topic /lleg_name  command name
+	std::vector<Eigen::VectorXd> PoseList;		// topic /lleg_name  pose data
 
   Eigen::VectorXd goal_pose;
   Eigen::VectorXd start_pose;

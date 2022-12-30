@@ -48,6 +48,13 @@ MotionModuleLleg::MotionModuleLleg()
 	start_time = 0.0;
   T_interp   = 1.0;
   s_interp   = 0.0;
+
+	//---------- set pose command and pose data ---------
+	PoseNameList.clear(); PoseList.clear();
+	Eigen::VectorXd pose(JointNameList.size()); 
+	
+	PoseNameList.push_back("initial"); pose << 0.2, 0,   0,  0.85,   0, 0; PoseList.push_back(pose);
+	PoseNameList.push_back("squat");   pose << 0.2, 0, 0.5, -0.15, 0.5, 0; PoseList.push_back(pose);
   
   firsttime = true;
 }
@@ -76,8 +83,9 @@ void MotionModuleLleg::queueThread()
   ros_node.setCallbackQueue(&callback_queue);
 
   /* subscriber */
-  sub1_ = ros_node.subscribe("/lleg_cmd", 10, &MotionModuleLleg::topicCallback, this);
-
+  sub_cmdData  = ros_node.subscribe("/lleg_cmd" , 10, &MotionModuleLleg::cmdData_callback, this);
+  sub_poseName = ros_node.subscribe("/lleg_pose", 10, &MotionModuleLleg::poseName_callback, this);
+  
   /* publisher */
  // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
 
@@ -88,12 +96,8 @@ void MotionModuleLleg::queueThread()
 
 /* -------------------- Callback ---------------------------- */
 
-void MotionModuleLleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr &msg)
+void MotionModuleLleg::cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg)
 {
-//  std_msgs::Float32MultiArray std_msg;
-//  std_msg.data = msg->data;
-//  pub1_.publish(std_msg);
-
 	start_time = Time;
 	start_pose = goal_pose;
   
@@ -111,6 +115,31 @@ void MotionModuleLleg::topicCallback(const std_msgs::Float32MultiArray::ConstPtr
   
   T_interp = 2.0;
   s_interp = 0.0;
+}
+
+void MotionModuleLleg::poseName_callback(const std_msgs::String::ConstPtr &msg)
+{
+
+	fprintf(stderr, "pose name = %s \n",msg->data.c_str());
+	
+	int i;
+	for(i = 0; i < PoseNameList.size(); i++){
+		if( msg->data == PoseNameList[i] ){
+			std::cout << PoseList[i].transpose() << std::endl;
+			
+			start_time = Time;
+			start_pose = goal_pose;
+			goal_pose  = PoseList[i];
+			
+			T_interp = 2.0;
+			s_interp = 0.0;
+			break;
+		}
+	}
+	if( i == PoseNameList.size() ){
+		std::cout << msg->data << " doesn't exist." << std::endl;
+	}
+	
 }
 
 
@@ -141,17 +170,10 @@ void MotionModuleLleg::process(std::map<std::string, robotis_framework::Dynamixe
       start_pose(j) = dxl->dxl_state_->present_position_;		
 		}
     
-		for(int i = 0; i < start_pose.size(); i++){
-		  fprintf(stderr, "left leg start_pose(%d)=%g\n",i,start_pose(i));
-		}
+    std::cout << "start_pose = [" << start_pose.transpose() << "]" << std::endl;
     
     goal_pose = start_pose;
-    s_interp = 1.0;
- 
- 		for(int i = 0; i < goal_pose.size(); i++){
-		  fprintf(stderr, "left leg goal_pose(%d)=%g\n",i,goal_pose(i));
-		}
-
+    s_interp = 1.0; 
     
     firsttime = false;
     fprintf(stderr, "motion_module_lleg: enable\n");    

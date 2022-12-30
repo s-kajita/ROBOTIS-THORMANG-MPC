@@ -50,7 +50,7 @@ MotionModuleRleg::MotionModuleRleg()
   T_interp   = 1.0;
   s_interp   = 0.0;
 
-	// set pose command and pose data
+	//---------- set pose command and pose data ---------
 	PoseNameList.clear(); PoseList.clear();
 	Eigen::VectorXd pose(JointNameList.size()); 
 	
@@ -170,7 +170,9 @@ void MotionModuleRleg::process(std::map<std::string, robotis_framework::Dynamixe
 
       start_pose(j) = dxl->dxl_state_->present_position_;		
 		}
-    
+		
+    std::cout << "start_pose = [" << start_pose.transpose() << "]" << std::endl;
+   
     goal_pose = start_pose;
     s_interp = 1.0;
     
