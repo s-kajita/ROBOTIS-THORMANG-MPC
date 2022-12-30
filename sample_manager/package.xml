@@ -57,7 +57,8 @@
   <build_depend>sample_sensor_module</build_depend>
   <build_depend>motion_module_rleg</build_depend>
   <build_depend>motion_module_lleg</build_depend>
-  
+  <build_depend>motion_module_biped</build_depend>
+    
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>robotis_controller</exec_depend>
@@ -66,4 +67,5 @@
   <exec_depend>sample_sensor_module</exec_depend>
 	<exec_depend>motion_module_rleg</exec_depend>
 	<exec_depend>motion_module_lleg</exec_depend>
+	<exec_depend>motion_module_biped</exec_depend>
 </package>

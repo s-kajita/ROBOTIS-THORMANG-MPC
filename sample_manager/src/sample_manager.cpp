@@ -32,6 +32,7 @@
 #include "thormang3_action_module/action_module.h"
 #include "motion_module_lleg/motion_module_lleg.h"
 #include "motion_module_rleg/motion_module_rleg.h"
+#include "motion_module_biped/motion_module_biped.h"
 
 //#include "thormang3_manipulation_module/manipulation_module.h"
 //#include "thormang3_walking_module/walking_module.h"
@@ -92,6 +93,9 @@ int main(int argc, char **argv)
 	  }  		
   	else if(robot_file.find("lleg.robot") != std::string::npos){
 	    controller->addMotionModule((robotis_framework::MotionModule*)MotionModuleLleg::getInstance());
+	  }
+	  else if(robot_file.find("biped.robot") != std::string::npos){
+	    controller->addMotionModule((robotis_framework::MotionModule*)MotionModuleBiped::getInstance());
 	  }  		
      
     ROS_INFO("Start timer, control cycle= %d [ms]",controller->robot_->getControlCycle() );

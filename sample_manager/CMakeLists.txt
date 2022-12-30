@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   sample_sensor_module
   motion_module_rleg
 	motion_module_lleg
+	motion_module_biped
 )
 
 ################################################
@@ -39,6 +40,7 @@ catkin_package(
     sample_sensor_module
     motion_module_rleg
 		motion_module_lleg
+		motion_module_biped
 )
 
 ###########

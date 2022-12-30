@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<launch>    
+    <arg name="use_imu" default="false"/>
+    <arg name="use_lidar" default="false" />
+    
+    <param name="gazebo"                   value="false"    type="bool"/>
+    <param name="gazebo_robot_name"        value="sample"/>
+    
+    <param name="offset_file_path"         value="$(find sample_manager)/config/offset.yaml"/>
+    <param name="robot_file_path"          value="$(find sample_manager)/config/biped.robot"/>
+    <param name="init_file_path"           value="$(find sample_manager)/config/dxl_biped.yaml"/>
+        
+    <param name="ft_data_path"             value="$(find sample_manager)/config/ft_data.yaml"/>
+    <param name="ft_calibration_data_path" value="$(find sample_manager)/config/ft_calibration_data.yaml"/>
+
+    <param name="action_file_path"         value="$(find thormang3_action_module)/data/motion_4096.bin"/>
+                	 
+    
+    <!-- SAMPLE Manager -->
+    <node pkg="sample_manager" type="sample_manager" name="sample_manager" output="screen"/>
+    
+</launch>
