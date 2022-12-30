@@ -99,8 +99,14 @@ void MotionModuleRleg::queueThread()
 
 void MotionModuleRleg::cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg)
 {
+	//------------ Check message size ------------
+  if(msg->data.size() != goal_pose.size()){
+    fprintf(stderr, "[ERROR] data.size()= %d, whereas pose.size()= %d\n",(int)msg->data.size(),(int)goal_pose.size());
+    return;
+  } 
+  
 	start_time = Time;
-	start_pose = goal_pose;
+	start_pose = goal_pose;  
   
   fprintf(stderr, "right leg goal_pose = [");
   for(int i = 0; i < goal_pose.size(); i++){
@@ -120,12 +126,11 @@ void MotionModuleRleg::cmdData_callback(const std_msgs::Float32MultiArray::Const
 
 void MotionModuleRleg::poseName_callback(const std_msgs::String::ConstPtr &msg)
 {
-
-	fprintf(stderr, "pose name = %s \n",msg->data.c_str());
-	
 	int i;
+	
 	for(i = 0; i < PoseNameList.size(); i++){
 		if( msg->data == PoseNameList[i] ){
+			fprintf(stderr, "pose name = %s \n",msg->data.c_str());
 			std::cout << PoseList[i].transpose() << std::endl;
 			
 			start_time = Time;
