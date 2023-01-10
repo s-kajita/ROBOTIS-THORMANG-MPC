@@ -62,9 +62,10 @@ MotionModuleBiped::MotionModuleBiped()
 	PoseNameList.clear(); PoseList.clear();
 	Eigen::VectorXd pose(JointNameList.size()); 
 	
-	PoseNameList.push_back("initial"); pose << -0.2, 0,    0, -0.85,    0, 0,  0.3, 0,   0,  0.85,   0, 0; PoseList.push_back(pose);
-	PoseNameList.push_back("halfsitting");   pose << -0.2, 0, -0.5,  0.15, -0.5, 0,  0.3, 0, 0.5, -0.15, 0.5, 0; PoseList.push_back(pose);  
-	PoseNameList.push_back("squat");   pose << -0.2, 0, -1.0,  1.15, -1.0, 0,  0.3, 0, 1.0, -1.15, 1.0, 0; PoseList.push_back(pose);  
+	PoseNameList.push_back("initial");     pose << -0.2, 0,    0, -0.85,    0, 0,  0.3, 0,   0,  0.85,   0, 0; PoseList.push_back(pose);
+	PoseNameList.push_back("halfsitting"); pose << -0.2, 0, -0.5,  0.15, -0.5, 0,  0.3, 0, 0.5, -0.15, 0.5, 0; PoseList.push_back(pose);  
+	PoseNameList.push_back("squat");       pose << -0.2, 0, -1.0,  1.15, -1.0, 0,  0.3, 0, 1.0, -1.15, 1.0, 0; PoseList.push_back(pose);  
+	PoseNameList.push_back("openhipyaw");  pose << -3.14,0,    0, -0.85,    0, 0,  3.14,0,   0,  0.85,   0, 0; PoseList.push_back(pose);  
 }
 
 MotionModuleBiped::~MotionModuleBiped()
