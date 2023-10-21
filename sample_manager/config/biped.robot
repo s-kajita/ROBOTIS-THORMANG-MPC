@@ -16,7 +16,7 @@ dynamixel | /dev/ttyUSB0 | 5   | XM540-W270     | 2.0      | joint2       | pres
 dynamixel | /dev/ttyUSB0 | 6   | XM540-W270     | 2.0      | joint2s      | present_position, present_current
 dynamixel | /dev/ttyUSB0 | 7   | XM540-W270     | 2.0      | joint3       | present_position, present_current
 dynamixel | /dev/ttyUSB0 | 8   | XM540-W270     | 2.0      | joint3s      | present_position, present_current
-dynamixel | /dev/ttyUSB0 | 9   | XM540-W270     | 2.0      | joint4       | present_position, present_current
+dynamixel | /dev/ttyUSB0 | 9   | XM540-W270     | 2.0      | joint4       | present_position, present_current, external_port_data_1, external_port_data_2
 dynamixel | /dev/ttyUSB0 | 10  | XM540-W270     | 2.0      | joint4s      | present_position, present_current
 dynamixel | /dev/ttyUSB0 | 11  | XM540-W270     | 2.0      | joint5       | present_position, present_current
 

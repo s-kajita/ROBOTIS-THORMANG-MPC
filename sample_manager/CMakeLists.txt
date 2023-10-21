@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   robotis_controller
   thormang3_base_module
   thormang3_action_module
-  sample_sensor_module
+  sensor_module_biped
   motion_module_rleg
 	motion_module_lleg
 	motion_module_biped
@@ -37,7 +37,7 @@ catkin_package(
     robotis_controller
     thormang3_base_module
     thormang3_action_module
-    sample_sensor_module
+    sensor_module_biped
     motion_module_rleg
 		motion_module_lleg
 		motion_module_biped

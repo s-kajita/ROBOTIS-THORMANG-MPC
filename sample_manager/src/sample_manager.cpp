@@ -25,7 +25,7 @@
 #include "robotis_controller/robotis_controller.h"
 
 /* Sensor Module Header */
-#include "sample_sensor_module/sample_sensor_module.h"
+#include "sensor_module_biped/sensor_module_biped.h"
 
 /* Motion Module Header */
 #include "thormang3_base_module/base_module.h"
@@ -39,6 +39,7 @@
 //#include "thormang3_gripper_module/gripper_module.h"
 
 using namespace thormang3;
+using namespace ROBOTIS;
 
 int main(int argc, char **argv)
 {
@@ -82,7 +83,7 @@ int main(int argc, char **argv)
     sleep(1);
 
     /* Add Sensor Module */
-    controller->addSensorModule((robotis_framework::SensorModule*)SampleSensor::getInstance());
+    controller->addSensorModule((robotis_framework::SensorModule*)SensorModuleBiped::getInstance());
 
     /* Add Motion Module */
     controller->addMotionModule((robotis_framework::MotionModule*)BaseModule::getInstance());
