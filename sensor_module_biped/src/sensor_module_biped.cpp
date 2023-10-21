@@ -49,7 +49,7 @@ void SensorModuleBiped::queueThread()
   //sub1_ = ros_node.subscribe("/tutorial_topic", 10, &SensorModuleBiped::topicCallback, this);
 
   /* publisher */
-  pub1_ = ros_node.advertise<std_msgs::UInt16>("/foot_force_sensor", 1, true);
+  pub1_rfoot = ros_node.advertise<std_msgs::UInt16MultiArray>("/rfoot_forces", 1, true);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while(ros_node.ok())
@@ -68,12 +68,20 @@ void SensorModuleBiped::topicCallback(const std_msgs::Int16::ConstPtr &msg)
 void SensorModuleBiped::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
     std::map<std::string, robotis_framework::Sensor *> sensors)
 {
-  uint16_t ext_port_data_1 = dxls["joint4"]->dxl_state_->bulk_read_table_["external_port_data_1"];
-  uint16_t ext_port_data_2 = dxls["joint4"]->dxl_state_->bulk_read_table_["external_port_data_2"];
+  /* right foot force sensors   (pitch ankle joint) */
+  uint16_t ext_port_data_0 = dxls["joint4"]->dxl_state_->bulk_read_table_["external_port_data_1"];
+  uint16_t ext_port_data_1 = dxls["joint4"]->dxl_state_->bulk_read_table_["external_port_data_2"];
+  uint16_t ext_port_data_2 = dxls["joint4s"]->dxl_state_->bulk_read_table_["external_port_data_1"];
+  uint16_t ext_port_data_3 = dxls["joint4s"]->dxl_state_->bulk_read_table_["external_port_data_2"];
 
-	std_msgs::UInt16 msg;
-	msg.data = ext_port_data_1;
-  pub1_.publish(msg);
+	std_msgs::UInt16MultiArray msg;
+	msg.data.resize(4);
+	msg.data[0] = ext_port_data_0;
+  msg.data[1] = ext_port_data_1;
+  msg.data[2] = ext_port_data_2;
+  msg.data[3] = ext_port_data_3;
+
+  pub1_rfoot.publish(msg);
 
   result_["test_sensor"] = 0.0;
 }

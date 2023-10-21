@@ -19,7 +19,7 @@
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
-#include <std_msgs/UInt16.h>
+#include <std_msgs/UInt16MultiArray.h>
 #include <boost/thread.hpp>
 
 #include "robotis_framework_common/sensor_module.h"
@@ -37,7 +37,7 @@ private:
 
   /* sample subscriber & publisher */
   //ros::Subscriber sub1_;
-  ros::Publisher  pub1_;
+  ros::Publisher  pub1_rfoot;
 
   void queueThread();
 
