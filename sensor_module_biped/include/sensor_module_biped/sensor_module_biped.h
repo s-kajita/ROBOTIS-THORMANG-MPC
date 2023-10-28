@@ -19,6 +19,7 @@
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
+#include <std_msgs/Int16.h>
 #include <std_msgs/UInt16MultiArray.h>
 #include <boost/thread.hpp>
 
@@ -32,11 +33,11 @@ class SensorModuleBiped
     public robotis_framework::Singleton<SensorModuleBiped>
 {
 private:
-  int           control_cycle_msec_;
+  double           control_cycle_sec_;
   boost::thread queue_thread_;
 
   /* sample subscriber & publisher */
-  //ros::Subscriber sub1_;
+  ros::Subscriber sub1_;
   ros::Publisher  pub1_rfoot;
 
   void queueThread();
@@ -46,7 +47,7 @@ public:
   virtual ~SensorModuleBiped();
 
   /* ROS Topic Callback Functions */
-  //void topicCallback(const std_msgs::Int16::ConstPtr &msg);
+  void topicCallback(const std_msgs::Int16::ConstPtr &msg);
 
   void initialize(const int control_cycle_msec, robotis_framework::Robot *robot);
   void process(std::map<std::string, robotis_framework::Dynamixel *> dxls,

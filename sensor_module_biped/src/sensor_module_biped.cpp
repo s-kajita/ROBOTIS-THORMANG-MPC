@@ -13,16 +13,15 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *******************************************************************************/
-
 #include <stdio.h>
 #include "sensor_module_biped/sensor_module_biped.h"
 
 using namespace ROBOTIS;
 
 SensorModuleBiped::SensorModuleBiped()
-  : control_cycle_msec_(8)
+  : control_cycle_sec_(0.01)
 {
-  module_name_ = "test_sensor_module"; // set unique module name
+  module_name_ = "sensor_module_biped"; // set unique module name
 
   result_["test_sensor"] = 0.0;
 }
@@ -34,8 +33,10 @@ SensorModuleBiped::~SensorModuleBiped()
 
 void SensorModuleBiped::initialize(const int control_cycle_msec, robotis_framework::Robot *robot)
 {
-  control_cycle_msec_ = control_cycle_msec;
+  control_cycle_sec_ = control_cycle_msec/1000.0;
   queue_thread_ = boost::thread(boost::bind(&SensorModuleBiped::queueThread, this));
+  
+  fprintf(stderr, "sensor_module_biped:initialize()\n");
 }
 
 void SensorModuleBiped::queueThread()
@@ -46,24 +47,20 @@ void SensorModuleBiped::queueThread()
   ros_node.setCallbackQueue(&callback_queue);
 
   /* subscriber */
-  //sub1_ = ros_node.subscribe("/tutorial_topic", 10, &SensorModuleBiped::topicCallback, this);
+  //sub1_ = ros_node.subscribe("/sensor_module", 10, &SensorModuleBiped::topicCallback, this);
 
   /* publisher */
   pub1_rfoot = ros_node.advertise<std_msgs::UInt16MultiArray>("/rfoot_forces", 1, true);
 
-  ros::WallDuration duration(control_cycle_msec_ / 1000.0);
-  while(ros_node.ok())
-    callback_queue.callAvailable(duration);
+  ros::WallDuration duration(control_cycle_sec_);
+  //while(ros_node.ok())
+  //  callback_queue.callAvailable(duration);
 }
 
-/*
 void SensorModuleBiped::topicCallback(const std_msgs::Int16::ConstPtr &msg)
 {
-  std_msgs::Int16 msg_int16;
-  msg_int16.data = msg->data;
-  pub1_.publish(msg_int16);
+	std::cout << "msg: " <<  msg->data << std::endl;
 }
-*/
 
 void SensorModuleBiped::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
     std::map<std::string, robotis_framework::Sensor *> sensors)
@@ -71,8 +68,8 @@ void SensorModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
   /* right foot force sensors   (pitch ankle joint) */
   uint16_t ext_port_data_0 = dxls["joint4"]->dxl_state_->bulk_read_table_["external_port_data_1"];
   uint16_t ext_port_data_1 = dxls["joint4"]->dxl_state_->bulk_read_table_["external_port_data_2"];
-  uint16_t ext_port_data_2 = dxls["joint4s"]->dxl_state_->bulk_read_table_["external_port_data_1"];
-  uint16_t ext_port_data_3 = dxls["joint4s"]->dxl_state_->bulk_read_table_["external_port_data_2"];
+  uint16_t ext_port_data_2 = dxls["joint5"]->dxl_state_->bulk_read_table_["external_port_data_1"];
+  uint16_t ext_port_data_3 = dxls["joint5"]->dxl_state_->bulk_read_table_["external_port_data_2"];
 
 	std_msgs::UInt16MultiArray msg;
 	msg.data.resize(4);
