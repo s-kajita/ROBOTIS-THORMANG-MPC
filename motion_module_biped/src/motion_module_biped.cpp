@@ -53,6 +53,9 @@ MotionModuleBiped::MotionModuleBiped()
 
   goal_pose  = Eigen::VectorXd::Zero(JointNameList.size());
   start_pose = Eigen::VectorXd::Zero(JointNameList.size());
+	pose_offset= Eigen::VectorXd::Zero(JointNameList.size());
+
+	pose_offset << 0.15,0,0,0,0,0,   0,0,0,0,0,0;
 
 	start_time = 0.0;
   T_interp   = 1.0;
@@ -116,10 +119,10 @@ void MotionModuleBiped::cmdData_callback(const std_msgs::Float32MultiArray::Cons
 	start_time = Time;
 	start_pose = goal_pose;  
   
-  fprintf(stderr, "right leg goal_pose = [");
+  fprintf(stderr, "biped goal_pose = [");
   for(int i = 0; i < goal_pose.size(); i++){
     goal_pose(i) = (double)msg->data[i];
-    fprintf(stderr, " %g ", goal_pose(i));
+    fprintf(stderr, " %g ", goal_pose(i)*RADIAN2DEGREE);
     if( i != goal_pose.size()-1){
     	fprintf(stderr, ",");
     }
@@ -139,7 +142,7 @@ void MotionModuleBiped::poseName_callback(const std_msgs::String::ConstPtr &msg)
 	for(i = 0; i < PoseNameList.size(); i++){
 		if( msg->data == PoseNameList[i] ){
 			fprintf(stderr, "pose name = %s \n",msg->data.c_str());
-			std::cout << PoseList[i].transpose() << std::endl;
+			std::cout << PoseList[i].transpose()*RADIAN2DEGREE << std::endl;
 			
 			start_time = Time;
 			start_pose = goal_pose;
@@ -184,7 +187,7 @@ void MotionModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
       start_pose(j) = dxl->dxl_state_->present_position_;		
 		}
 		
-    std::cout << "start_pose = [" << start_pose.transpose() << "]" << std::endl;
+    std::cout << "start_pose = [" << start_pose.transpose()*RADIAN2DEGREE << "]" << std::endl;
    
     goal_pose = start_pose;
     s_interp = 1.0;
@@ -209,7 +212,7 @@ void MotionModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
 
 	for( int j=0; j < JointNameList.size(); j++){
 		std::string jname = JointNameList[j];
-		result_[jname]->goal_position_ = pose(j);
+		result_[jname]->goal_position_ = pose(j) + pose_offset(j);
 	}
 		
 }

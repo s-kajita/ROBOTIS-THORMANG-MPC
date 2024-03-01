@@ -71,6 +71,7 @@ private:
 	
 	std::vector<std::string> PoseNameList;				// topic /biped_name  command name
 	std::vector<Eigen::VectorXd> PoseList;		// topic /biped_name  pose data
+	Eigen::VectorXd pose_offset;
 
   Eigen::VectorXd goal_pose;
   Eigen::VectorXd start_pose;
