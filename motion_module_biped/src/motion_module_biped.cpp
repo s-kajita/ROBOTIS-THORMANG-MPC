@@ -58,7 +58,10 @@ MotionModuleBiped::MotionModuleBiped()
 	
 	joint_dir << 1.9048,-1,1,1,1,1,  1.9048,-1,-1,-1,-1,1;		// align joint rotation direction to XYZ frame (hip_yaw= 40T/21T)
 
-	pose_offset << 0.0787,0,0,-0.85,0,0,   0,0,0,-0.85,0,0;
+
+	pose_offset << 4.509,0,0,-45.0,-5.0,0,  0,0,0,-45.0,-5.0,0;   // hip_yaw offset,  knee & ankle: structual offset [deg]
+	pose_offset *= DEGREE2RADIAN;
+
 
 	start_time = 0.0;
   T_interp   = 1.0;
@@ -72,7 +75,7 @@ MotionModuleBiped::MotionModuleBiped()
 	PoseNameList.push_back("halfsitting"); pose << 0,0,-30,60,-30,0,   0,0,-30,60,-30,0;  PoseList.push_back(DEGREE2RADIAN*pose);  
 	PoseNameList.push_back("squat");       pose << 0,0,-60,120,-60,0,  0,0,-60,120,-60,0; PoseList.push_back(DEGREE2RADIAN*pose);  
 	PoseNameList.push_back("openhipyaw");  pose << -90,0,0,0,0,0,      90,0,0,0,0,0;      PoseList.push_back(DEGREE2RADIAN*pose); 
-	PoseNameList.push_back("spreadlegs");  pose << 0,-20,0,0,0,20,       0,20,0,0,0,-20;       PoseList.push_back(DEGREE2RADIAN*pose); 
+	PoseNameList.push_back("spreadlegs");  pose << 0,-20,0,0,0,20,     0,20,0,0,0,-20;       PoseList.push_back(DEGREE2RADIAN*pose); 
 }
 
 MotionModuleBiped::~MotionModuleBiped()
