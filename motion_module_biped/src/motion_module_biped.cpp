@@ -54,6 +54,9 @@ MotionModuleBiped::MotionModuleBiped()
   goal_pose  = Eigen::VectorXd::Zero(JointNameList.size());
   start_pose = Eigen::VectorXd::Zero(JointNameList.size());
 	pose_offset= Eigen::VectorXd::Zero(JointNameList.size());
+	joint_dir  = Eigen::VectorXd::Zero(JointNameList.size());
+	
+	joint_dir << 1,1,1,1,1,1,  1,1,-1,-1,-1,1;
 
 	pose_offset << 0.15,0,0,0,0,0,   0,0,0,0,0,0;
 
@@ -65,10 +68,10 @@ MotionModuleBiped::MotionModuleBiped()
 	PoseNameList.clear(); PoseList.clear();
 	Eigen::VectorXd pose(JointNameList.size()); 
 	
-	PoseNameList.push_back("initial");     pose << 0, 0,    0, -0.85,    0, 0,  0.0, 0,   0,  0.85,   0, 0; PoseList.push_back(pose);
-	PoseNameList.push_back("halfsitting"); pose << 0, 0, -0.5,  0.15, -0.5, 0,  0.0, 0, 0.5, -0.15, 0.5, 0; PoseList.push_back(pose);  
-	PoseNameList.push_back("squat");       pose << 0, 0, -1.0,  1.15, -1.0, 0,  0.0, 0, 1.0, -1.15, 1.0, 0; PoseList.push_back(pose);  
-	PoseNameList.push_back("openhipyaw");  pose << -3.14,0,    0, -0.85,    0, 0,  3.14,0,   0,  0.85,   0, 0; PoseList.push_back(pose);  
+	PoseNameList.push_back("initial");     pose << 0, 0,    0, -0.85,    0, 0,  0.0, 0,   0, -0.85,   0, 0; PoseList.push_back(pose);
+	PoseNameList.push_back("halfsitting"); pose << 0, 0, -0.5,  0.15, -0.5, 0,  0.0, 0, -0.5,  0.15, -0.5, 0; PoseList.push_back(pose);  
+	PoseNameList.push_back("squat");       pose << 0, 0, -1.0,  1.15, -1.0, 0,  0.0, 0, -1.0,  1.15, -1.0, 0; PoseList.push_back(pose);  
+	PoseNameList.push_back("openhipyaw");  pose << -3.14,0,    0, -0.85,    0, 0,  3.14,0,   0,  -0.85,   0, 0; PoseList.push_back(pose);  
 }
 
 MotionModuleBiped::~MotionModuleBiped()
@@ -184,10 +187,10 @@ void MotionModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
       else
         continue;
 
-      start_pose(j) = dxl->dxl_state_->present_position_;		
+      start_pose(j) = joint_dir(j)*dxl->dxl_state_->present_position_ - pose_offset(j);		// Dynamixel's position = joint_dir*(start_pose + pose_offset)
 		}
 		
-    std::cout << "start_pose = [" << start_pose.transpose()*RADIAN2DEGREE << "]" << std::endl;
+    std::cout << "start_pose = \n" << start_pose.transpose()*RADIAN2DEGREE << std::endl;
    
     goal_pose = start_pose;
     s_interp = 1.0;
@@ -212,7 +215,7 @@ void MotionModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
 
 	for( int j=0; j < JointNameList.size(); j++){
 		std::string jname = JointNameList[j];
-		result_[jname]->goal_position_ = pose(j) + pose_offset(j);
+		result_[jname]->goal_position_ = joint_dir(j) * (pose(j) + pose_offset(j));
 	}
 		
 }
