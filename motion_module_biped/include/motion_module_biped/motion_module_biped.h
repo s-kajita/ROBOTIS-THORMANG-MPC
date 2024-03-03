@@ -23,6 +23,7 @@
 #include <std_msgs/String.h>
 #include <boost/thread.hpp>
 #include <eigen3/Eigen/Eigen>
+#include <fstream>
 
 #include "robotis_framework_common/motion_module.h"
 #include "robotis_math/robotis_math.h"
@@ -40,8 +41,9 @@ public:
 
   /* ROS Topic Callback Functions */
   void cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);		// topic /biped_cmd
-	void poseName_callback(const std_msgs::String::ConstPtr &msg);							// topic /biped_name
-
+	void poseName_callback(const std_msgs::String::ConstPtr &msg);							// topic /biped_pose
+	void play_callback(const std_msgs::String::ConstPtr &msg);							    // topic /biped_play
+	
   /* ROS Calculation Functions */
   void jointTrajGenerateProc();  
 
@@ -52,7 +54,17 @@ public:
   void stop();
   bool isRunning();
   
-  
+  std::vector<std::string> split(std::string& input, char delimiter)
+	{
+    std::istringstream stream(input);
+    std::string field;
+    std::vector<std::string> result;
+    while (getline(stream, field, delimiter)) {
+        result.push_back(field);
+    }
+    return result;
+	};
+
 private:
 	int			iTime;
 	double 	Time;
@@ -63,6 +75,7 @@ private:
   /* sample subscriber & publisher */
   ros::Subscriber sub_cmdData;
   ros::Subscriber	sub_poseName;
+  ros::Subscriber	sub_play;
   //ros::Publisher  pub1_;
 
   void queueThread();
@@ -80,6 +93,10 @@ private:
   double start_time;
   double T_interp;
 	double s_interp;
+
+	std::vector<Eigen::VectorXd> WalkingPattern;
+	int		wp_count;
+	bool 	playing;
 
   bool firsttime;
   
