@@ -2,7 +2,26 @@ cmake_minimum_required(VERSION 3.0.2)
 project(sensor_module_biped)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
+
+#### C++ 14 required for MIP SDK ####
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(COMMON_SRC_DIR "${COMMON_DIR}/src")
+set(COMMON_INC_DIR "${COMMON_DIR}/include/${COMMON_NAME}")
+
+
+############# Settings to Use MIP SDK ##################
+#set(CURRENT_DIR "${CMAKE_CURRENT_LIST_DIR}")
+#set(MIP_SDK_DIR "${CURRENT_DIR}/mip_sdk")
+#set(MIP_SDK_SRC_DIR "${CURRENT_DIR}/mip_sdk/src")
+#set(MIP_SDK_UTIL_DIR "${CURRENT_DIR}/mip_sdk/examples")
+set(MIP_SDK_DIR "mip_sdk")
+set(MIP_SDK_SRC_DIR "mip_sdk/src")
+set(MIP_SDK_UTIL_DIR "mip_sdk/examples")
+
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -115,18 +134,38 @@ catkin_package(
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
+
+add_subdirectory("${MIP_SDK_DIR}" EXCLUDE_FROM_ALL)
+
+set(DEVICE_SOURCES
+    "${MIP_SDK_UTIL_DIR}/example_utils.c"
+    "${MIP_SDK_UTIL_DIR}/example_utils.h"
+    "${MIP_SDK_UTIL_DIR}/example_utils.cpp"
+    "${MIP_SDK_UTIL_DIR}/example_utils.hpp"
 )
+
+set(SERIAL_DEFS "MIP_USE_SERIAL")
+set(EXTRAS_DEFS "MIP_USE_EXTRAS")
+set(MIP_EXAMPLE_DEFS ${MIP_DEFINES} ${SERIAL_DEFS} ${EXTRAS_DEFS})
+
+add_compile_options(-DMIP_USE_SERIAL=1)
+add_compile_options(-DMIP_USE_EXTRAS=1)
 
 ## Declare a C++ library
 add_library(sensor_module_biped
    src/sensor_module_biped.cpp
+   ${DEVICE_SOURCES}
 )
 
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+target_include_directories(sensor_module_biped
+	PUBLIC
+  include
+  mip_sdk
+  mip_sdk/src
+  ${catkin_INCLUDE_DIRS}
+)
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -148,9 +187,10 @@ add_library(sensor_module_biped
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
+target_link_libraries(${PROJECT_NAME}
 #   ${catkin_LIBRARIES}
-# )
+	mip
+)
 
 #############
 ## Install ##

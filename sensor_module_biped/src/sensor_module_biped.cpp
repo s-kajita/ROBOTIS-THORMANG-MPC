@@ -17,6 +17,7 @@
 #include "sensor_module_biped/sensor_module_biped.h"
 
 using namespace ROBOTIS;
+using namespace mip;
 
 SensorModuleBiped::SensorModuleBiped()
   : control_cycle_sec_(0.01)
@@ -37,6 +38,28 @@ void SensorModuleBiped::initialize(const int control_cycle_msec, robotis_framewo
   queue_thread_ = boost::thread(boost::bind(&SensorModuleBiped::queueThread, this));
   
   fprintf(stderr, "sensor_module_biped:initialize()\n");
+  ROS_INFO("Starting sensor_module_biped");
+  
+	utils  = move(openFromArgs("/dev/ttyACM0", "115200", ""));
+  device = move(utils->device);
+  
+  printf("ping the IMU:  ");
+  if(commands_base::ping(*device) == CmdResult::ACK_OK)
+  	printf("OK\n");
+  else
+    printf("NG\n");
+    
+  printf("set IMU idele: ");
+  if(commands_base::setIdle(*device) == CmdResult::ACK_OK)
+  	printf("OK\n");
+  else
+    printf("NG\n");
+ 
+	printf("default settings: ");
+  if(commands_3dm::defaultDeviceSettings(*device) == CmdResult::ACK_OK)
+  	printf("OK\n");
+  else
+    printf("NG\n");
 }
 
 void SensorModuleBiped::queueThread()

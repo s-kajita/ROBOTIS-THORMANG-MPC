@@ -25,6 +25,13 @@
 
 #include "robotis_framework_common/sensor_module.h"
 
+/******** for MIP SDK  (IMU)  ******/
+#include <mip/mip_all.hpp>	 // location mip_sdk/src/mip/mip_all.hpp
+#include <array>
+#include "../mip_sdk/examples/example_utils.hpp"
+
+using namespace mip;
+
 namespace ROBOTIS
 {
 
@@ -41,6 +48,23 @@ private:
   ros::Publisher  pub1_rfoot;
 
   void queueThread();
+
+	/*=============== IMU sensor variables ================*/
+	std::unique_ptr<ExampleUtils> utils;
+  std::unique_ptr<mip::DeviceInterface> device;
+	
+	//Device data stores
+	data_sensor::GpsTimestamp sensor_gps_time;
+	data_sensor::ScaledAccel  sensor_accel;
+	data_sensor::ScaledGyro   sensor_gyro;
+
+	data_filter::Timestamp    filter_gps_time;
+	data_filter::Status       filter_status;
+	data_filter::EulerAngles  filter_euler_angles;
+	data_filter::CompAngularRate  filter_comp_angular_rate;
+	data_filter::CompAccel    filter_comp_accel;
+
+	bool filter_state_running = false;
 
 public:
   SensorModuleBiped();
