@@ -21,6 +21,7 @@
 #include <ros/callback_queue.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/UInt16MultiArray.h>
+#include <std_msgs/Float32MultiArray.h>
 #include <boost/thread.hpp>
 
 #include "robotis_framework_common/sensor_module.h"
@@ -46,12 +47,20 @@ private:
   /* sample subscriber & publisher */
   ros::Subscriber sub1_;
   ros::Publisher  pub1_rfoot;
+  ros::Publisher  pub1_gyro;
 
   void queueThread();
 
 	/*=============== IMU sensor variables ================*/
 	std::unique_ptr<ExampleUtils> utils;
-  std::unique_ptr<mip::DeviceInterface> device;
+  //std::unique_ptr<mip::DeviceInterface> imu_device;
+	
+	//Gyro bias
+	float gyro_bias[3];
+  float sensor_to_vehicle_rotation_euler[3];
+
+  DispatchHandler sensor_data_handlers[3];
+  DispatchHandler filter_data_handlers[5];
 	
 	//Device data stores
 	data_sensor::GpsTimestamp sensor_gps_time;
@@ -74,6 +83,8 @@ public:
   void topicCallback(const std_msgs::Int16::ConstPtr &msg);
 
   void initialize(const int control_cycle_msec, robotis_framework::Robot *robot);
+  void setup_IMU();
+  void read_IMU(std::vector<float> data);
   void process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
                std::map<std::string, robotis_framework::Sensor *> sensors);
 };

@@ -2,7 +2,15 @@ cmake_minimum_required(VERSION 3.0.2)
 project(motion_module_biped)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+#add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
+
+#### C++ 14 required for MIP SDK ####
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(COMMON_SRC_DIR "${COMMON_DIR}/src")
+set(COMMON_INC_DIR "${COMMON_DIR}/include/${COMMON_NAME}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -105,6 +113,8 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ../sensor_module_biped/mip_sdk
+  ../sensor_module_biped/mip_sdk/src
 #  ${Boost_INCLUDE_DIRS}
 )
 
@@ -112,7 +122,11 @@ add_library(${PROJECT_NAME}
   src/motion_module_biped.cpp
 )
 #add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+target_link_libraries(${PROJECT_NAME}
+	mip
+  ${catkin_LIBRARIES} ${Boost_LIBRARIES}
+)
 
 #############
 ## Install ##

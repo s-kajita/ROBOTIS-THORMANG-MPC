@@ -187,6 +187,7 @@ target_include_directories(sensor_module_biped
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+
 target_link_libraries(${PROJECT_NAME}
 #   ${catkin_LIBRARIES}
 	mip

@@ -40,6 +40,7 @@
 
 using namespace thormang3;
 using namespace ROBOTIS;
+using namespace mip;
 
 int main(int argc, char **argv)
 {

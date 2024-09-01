@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(thormang3_action_module)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ################################################################################
 # Find catkin packages and libraries for catkin and system dependencies

@@ -4,6 +4,12 @@ project(sample_manager)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++14)
 
+#### C++ 14 required for MIP SDK ####
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -47,15 +53,29 @@ catkin_package(
 ## Build ##
 ###########
 
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
+target_include_directories(sensor_module_biped
+	PUBLIC
+  include
+  ../sensor_module_biped/mip_sdk
+  ../sensor_module_biped/mip_sdk/src
   ${catkin_INCLUDE_DIRS}
 )
 
+
+
+### original ####
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+#include_directories(
+#  ${catkin_INCLUDE_DIRS}
+#)
+
 add_executable(${PROJECT_NAME} src/sample_manager.cpp)
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} mip)
 
 #############
 ## Install ##
