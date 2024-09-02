@@ -24,7 +24,9 @@ SensorModuleBiped::SensorModuleBiped()
 {
   module_name_ = "sensor_module_biped"; // set unique module name
 
-  result_["test_sensor"] = 0.0;
+  result_["gyro_x"] = 0.0;
+  result_["gyro_y"] = 0.0;
+  result_["gyro_z"] = 0.0;
 }
 
 SensorModuleBiped::~SensorModuleBiped()
@@ -270,10 +272,15 @@ void SensorModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
 
 	for(int i=0; i<3; i++)
 	  gyro.data[i] = filter_comp_angular_rate.gyro[i];
+	  
+	//sensors["gyro"] = (float)gyro.data[0];
+	//printf("%g\n",sensors["gyro"]);
 		
 	pub1_gyro.publish(gyro);
 	
 
-  result_["test_sensor"] = 0.0;
+  result_["gyro_x"] =  gyro.data[0];
+  result_["gyro_y"] = -gyro.data[1];
+  result_["gyro_z"] = -gyro.data[2];
 }
 
