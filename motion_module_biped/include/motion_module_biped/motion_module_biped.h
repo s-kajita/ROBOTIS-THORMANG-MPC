@@ -20,6 +20,7 @@
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 #include <boost/thread.hpp>
 #include <eigen3/Eigen/Eigen>
@@ -43,7 +44,8 @@ public:
   void cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);		// topic /biped_cmd
 	void poseName_callback(const std_msgs::String::ConstPtr &msg);							// topic /biped_pose
 	void play_callback(const std_msgs::String::ConstPtr &msg);							    // topic /biped_play
-	
+	void stabilizer_callback(const std_msgs::Int32::ConstPtr &msg);							// topic /st
+
   /* ROS Calculation Functions */
   void jointTrajGenerateProc();  
 
@@ -76,6 +78,7 @@ private:
   ros::Subscriber sub_cmdData;
   ros::Subscriber	sub_poseName;
   ros::Subscriber	sub_play;
+  ros::Subscriber	sub_stabilizer;
   //ros::Publisher  pub1_;
 
   void queueThread();
@@ -106,8 +109,9 @@ private:
   int     cnt_;
   int     all_time_steps_;
 
-  
-
+  /* stabilizer */
+  bool	stabilize=false;
+	Eigen::VectorXd pose_st;
 };
 
 }

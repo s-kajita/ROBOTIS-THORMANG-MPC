@@ -75,6 +75,8 @@ private:
 
 	bool filter_state_running = false;
 
+	float gyro_data[3];
+
 public:
   SensorModuleBiped();
   virtual ~SensorModuleBiped();

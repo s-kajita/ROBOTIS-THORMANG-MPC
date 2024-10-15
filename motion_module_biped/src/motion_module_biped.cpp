@@ -55,6 +55,7 @@ MotionModuleBiped::MotionModuleBiped()
   start_pose = Eigen::VectorXd::Zero(JointNameList.size());
 	pose_offset= Eigen::VectorXd::Zero(JointNameList.size());
 	joint_dir  = Eigen::VectorXd::Zero(JointNameList.size());
+	pose_st		 = Eigen::VectorXd::Zero(JointNameList.size());
 	
 	joint_dir << 1.9048,-1,1,1,1,1,  1.9048,-1,-1,-1,-1,1;		// align joint rotation direction to XYZ frame (hip_yaw= 40T/21T)
 
@@ -64,7 +65,7 @@ MotionModuleBiped::MotionModuleBiped()
 
 
 	start_time = 0.0;
-  T_interp   = 1.0;
+  T_interp   = 1.5;
   s_interp   = 0.0;
 
 	//---------- set pose command and pose data ---------
@@ -74,6 +75,7 @@ MotionModuleBiped::MotionModuleBiped()
 	PoseNameList.push_back("initial");     pose << 0,0,0,0,0,0,        0,0,0,0,0,0;       PoseList.push_back(DEGREE2RADIAN*pose);
 	PoseNameList.push_back("halfsitting"); pose << 0,0,-30,60,-30,0,   0,0,-30,60,-30,0;  PoseList.push_back(DEGREE2RADIAN*pose);  
 	PoseNameList.push_back("squat");       pose << 0,0,-60,120,-60,0,  0,0,-60,120,-60,0; PoseList.push_back(DEGREE2RADIAN*pose);  
+	PoseNameList.push_back("fullsquat");       pose << 0,0,-80,160,-80,0,  0,0,-80,160,-80,0; PoseList.push_back(DEGREE2RADIAN*pose);  
 	PoseNameList.push_back("openhipyaw");  pose << -90,0,0,0,0,0,      90,0,0,0,0,0;      PoseList.push_back(DEGREE2RADIAN*pose); 
 	PoseNameList.push_back("spreadlegs");  pose << 0,-20,0,0,0,20,     0,20,0,0,0,-20;    PoseList.push_back(DEGREE2RADIAN*pose); 
 	
@@ -137,6 +139,7 @@ void MotionModuleBiped::queueThread()
   sub_cmdData  = ros_node.subscribe("/biped_cmd",  10, &MotionModuleBiped::cmdData_callback, this);
   sub_poseName = ros_node.subscribe("/biped_pose", 10, &MotionModuleBiped::poseName_callback, this);
   sub_play     = ros_node.subscribe("/biped_play", 10, &MotionModuleBiped::play_callback, this);
+  sub_stabilizer= ros_node.subscribe("/st", 10,        &MotionModuleBiped::stabilizer_callback, this);
    
   /* publisher */
  // pub1_ = ros_node.advertise<std_msgs::Float32>("/sample_motion", 1, true);
@@ -215,6 +218,18 @@ void MotionModuleBiped::play_callback(const std_msgs::String::ConstPtr &msg)
   wp_count = 0;
 }
 
+void MotionModuleBiped::stabilizer_callback(const std_msgs::Int32::ConstPtr &msg)
+{
+	if( msg->data != 0 ){
+		stabilize = true;
+		fprintf(stderr, "stabilize = true\n");
+	}
+	else {
+		stabilize = false;
+		fprintf(stderr, "stabilize = false\n");
+	}
+}
+
 /* =================================== MAIN PROCESS ===================================== */ 
 
 void MotionModuleBiped::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
@@ -277,11 +292,26 @@ void MotionModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
   	}
   }
 
+	double Kx = 0.05;
+	double Ky = 0.03;
+	if( !stabilize ){
+		pose_st		 = Eigen::VectorXd::Zero(JointNameList.size());
+	}
+	else {
+		pose_st(4) = Ky*sensors["gyro_y"];
+		pose_st(5) = Kx*sensors["gyro_x"];
+		
+		pose_st(10)= Ky*sensors["gyro_y"];
+		pose_st(11)= Kx*sensors["gyro_x"];
+	}
+
 	for( int j=0; j < JointNameList.size(); j++){
 		std::string jname = JointNameList[j];
-		result_[jname]->goal_position_ = joint_dir(j) * (pose(j) + pose_offset(j));
+		result_[jname]->goal_position_ = joint_dir(j) * (pose(j) + pose_offset(j) + pose_st(j));
 	}
-		
+	
+	
+	//printf("%g\n",sensors["gyro_x"]);	
 }
 
 void MotionModuleBiped::stop()
