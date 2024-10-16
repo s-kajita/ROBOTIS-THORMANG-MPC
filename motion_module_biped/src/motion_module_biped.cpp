@@ -100,7 +100,8 @@ void MotionModuleBiped::initialize(const int control_cycle_msec, robotis_framewo
   
   //----------- get walking pattern ----------
 	WalkingPattern.clear();
-  
+
+/*  
   std::ifstream pattern_file("/home/kajita/pattern/step.csv");
   std::string line;
   
@@ -123,9 +124,13 @@ void MotionModuleBiped::initialize(const int control_cycle_msec, robotis_framewo
 	
 	std::cout << "jsize = " << jsize << std::endl;
 	std::cout << "WalkingPattern size= " << WalkingPattern.size() << std::endl;
+*/
 
 	wp_count = 0;
 	playing = false;
+	
+	stabilize = false;
+	fprintf(stderr, "stabilize = false\n");
 }
 
 void MotionModuleBiped::queueThread()
@@ -138,6 +143,7 @@ void MotionModuleBiped::queueThread()
   /* subscriber */
   sub_cmdData  = ros_node.subscribe("/biped_cmd",  10, &MotionModuleBiped::cmdData_callback, this);
   sub_poseName = ros_node.subscribe("/biped_pose", 10, &MotionModuleBiped::poseName_callback, this);
+  sub_load     = ros_node.subscribe("/biped_load", 10, &MotionModuleBiped::load_callback, this);
   sub_play     = ros_node.subscribe("/biped_play", 10, &MotionModuleBiped::play_callback, this);
   sub_stabilizer= ros_node.subscribe("/st", 10,        &MotionModuleBiped::stabilizer_callback, this);
    
@@ -202,20 +208,56 @@ void MotionModuleBiped::poseName_callback(const std_msgs::String::ConstPtr &msg)
 	
 }
 
+void MotionModuleBiped::load_callback(const std_msgs::String::ConstPtr &msg)
+{
+	WalkingPattern.clear();
+  playing = false;
+  
+  std::string pattern_dir = "/home/kajita/pattern/";
+  std::string pattern_path;
+  
+  pattern_path = pattern_dir + msg->data + ".csv";
+  
+	fprintf(stderr, "load pattern full path: %s \n",pattern_path.c_str());
+  
+  std::ifstream pattern_file(pattern_path.c_str());
+  std::string line;
+  
+  int jsize = 0;
+  while (getline(pattern_file, line)) {
+    if(line[0]=='%' || line[0] == '#') continue;    
+    	std::vector<std::string> strvec = split(line, ',');
+      
+      if (jsize == 0){
+      	jsize = strvec.size();
+        pose.resize(jsize); 
+      }
+      for (int i=0; i<jsize;i++){
+      	//fprintf(stderr, "%g, ", stof(strvec.at(i)));
+      	pose[i] = stof(strvec.at(i));
+      }
+      //fprintf(stderr, "\n");
+      WalkingPattern.push_back(pose);
+	}
+	
+	std::cout << "jsize = " << jsize << std::endl;
+	std::cout << "WalkingPattern size= " << WalkingPattern.size() << std::endl;
+}
+
 void MotionModuleBiped::play_callback(const std_msgs::String::ConstPtr &msg)
 {
-	fprintf(stderr, "play pattern: %s \n",msg->data.c_str());
+	fprintf(stderr, "msg: %s \n",msg->data.c_str());
 	
 	start_time = Time;
 	start_pose = goal_pose;  
   
+  wp_count = 0;
   goal_pose = WalkingPattern[0];
     
   T_interp = 2.0;
   s_interp = 0.0;
   
   playing = true;
-  wp_count = 0;
 }
 
 void MotionModuleBiped::stabilizer_callback(const std_msgs::Int32::ConstPtr &msg)
@@ -283,12 +325,12 @@ void MotionModuleBiped::process(std::map<std::string, robotis_framework::Dynamix
   if( playing && s_interp == 1.0){
   	pose = WalkingPattern[ wp_count ];
   	//std::cout << WalkingPattern[ wp_count ].transpose()*RADIAN2DEGREE << std::endl;
-  	if( wp_count < WalkingPattern.size()-2 ){
-  		wp_count++;
-  	}
-  	else {
-  		playing = false;
+  	if( wp_count == WalkingPattern.size()-1 ){
+   		playing = false;
   		goal_pose = pose;
+  	} 	
+  	else{
+  		wp_count++;
   	}
   }
 

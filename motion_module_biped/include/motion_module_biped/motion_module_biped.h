@@ -43,6 +43,7 @@ public:
   /* ROS Topic Callback Functions */
   void cmdData_callback(const std_msgs::Float32MultiArray::ConstPtr &msg);		// topic /biped_cmd
 	void poseName_callback(const std_msgs::String::ConstPtr &msg);							// topic /biped_pose
+	void load_callback(const std_msgs::String::ConstPtr &msg);							    // topic /biped_load
 	void play_callback(const std_msgs::String::ConstPtr &msg);							    // topic /biped_play
 	void stabilizer_callback(const std_msgs::Int32::ConstPtr &msg);							// topic /st
 
@@ -77,6 +78,7 @@ private:
   /* sample subscriber & publisher */
   ros::Subscriber sub_cmdData;
   ros::Subscriber	sub_poseName;
+  ros::Subscriber sub_load;
   ros::Subscriber	sub_play;
   ros::Subscriber	sub_stabilizer;
   //ros::Publisher  pub1_;
