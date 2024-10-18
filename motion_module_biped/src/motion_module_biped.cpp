@@ -210,7 +210,6 @@ void MotionModuleBiped::poseName_callback(const std_msgs::String::ConstPtr &msg)
 
 void MotionModuleBiped::load_callback(const std_msgs::String::ConstPtr &msg)
 {
-	WalkingPattern.clear();
   playing = false;
   
   std::string pattern_dir = "/home/kajita/pattern/";
@@ -221,6 +220,12 @@ void MotionModuleBiped::load_callback(const std_msgs::String::ConstPtr &msg)
 	fprintf(stderr, "load pattern full path: %s \n",pattern_path.c_str());
   
   std::ifstream pattern_file(pattern_path.c_str());
+  if(!pattern_file){
+  	fprintf(stderr, "[ERROR] file doesn't exist!\n");
+  	return;
+  }
+
+	WalkingPattern.clear();  
   std::string line;
   
   int jsize = 0;
@@ -247,6 +252,11 @@ void MotionModuleBiped::load_callback(const std_msgs::String::ConstPtr &msg)
 void MotionModuleBiped::play_callback(const std_msgs::String::ConstPtr &msg)
 {
 	fprintf(stderr, "msg: %s \n",msg->data.c_str());
+	
+	if(WalkingPattern.size() == 0){
+		fprintf(stderr, "No WalkingPattern has loaded.\n");
+		return;
+	}
 	
 	start_time = Time;
 	start_pose = goal_pose;  
